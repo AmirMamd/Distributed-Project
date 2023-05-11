@@ -2,54 +2,84 @@ import socket
 from _thread import *
 from player import Player
 import pickle
+import pygame
+import threading
 
-server = "192.168.1.3"
-port = 5555
+
+LISTENER_LIMIT = 5
+active_clients = []  # List of all currently connected users
+HOST = "197.161.174.185"
+PORT = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
-    s.bind((server, port))
+    s.bind((HOST, PORT))
 except socket.error as e:
     str(e)
 
-s.listen(2)
+s.listen(4)
 print("Waiting for a connection, Server Started")
 
 
-players = [Player(0,0,50,50,(255,0,0)), Player(100,100, 50,50, (0,0,255))]
+pos = [(1000*0.45,600*0.8),(1000*0.5,600*0.8),(1000*0.55,600*0.8),(1000*0.6,600*0.8)]
+carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
+carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
+carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
+carImg3 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car3.png')
+Images=[".\\Car Racing Game using Pygame\\img\\car.png",".\\Car Racing Game using Pygame\\img\\car1.png",".\\Car Racing Game using Pygame\\img\\car2.png",".\\Car Racing Game using Pygame\\img\\car3.png"]
+
 
 def threaded_client(conn, player):
-    conn.send(pickle.dumps(players[player]))
+    global currentPlayer
+    print("player",player)
+    print("CurrentPlayer",currentPlayer)
+    conn.send(pickle.dumps(str(pos[player]) + Images[player]))
     reply = ""
     while True:
         try:
-            data = pickle.loads(conn.recv(2048))
-            players[player] = data
+            data = pickle.loads(conn.recv(2048*4).decode())
+            print("dataaaaa",data)
+            pos[player] = data
 
             if not data:
                 print("Disconnected")
                 break
             else:
-                if player == 1:
-                    reply = players[0]
+                print("elseeee")
+                if player == 0:
+                    reply = pos[0]
+                    print("reply",reply)
+                elif(player==1):
+                    reply = pos[1]
+                    print("reply", reply)
+                elif(player==2):
+                    reply = pos[2]
+                    print("reply", reply)
                 else:
-                    reply = players[1]
+                    reply = pos[3]
+                    print("reply", reply)
 
-                print("Received: ", data)
-                print("Sending : ", reply)
+            print("Received: ", data)
+            print("Sending : ", reply)
 
-            conn.sendall(pickle.dumps(reply))
+            conn.sendall(str.encode(reply))
         except:
+            print("")
             break
 
     print("Lost connection")
     conn.close()
 
-currentPlayer = 0
+currentPlayer=0
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
+    if(currentPlayer < 4):
+        start_new_thread(threaded_client, (conn, currentPlayer))
+        currentPlayer += 1
 
-    start_new_thread(threaded_client, (conn, currentPlayer))
-    currentPlayer += 1
+
+#
+# if __name__ == '__main__':
+#     main()
