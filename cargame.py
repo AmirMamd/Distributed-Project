@@ -53,8 +53,15 @@ class CarRacing:
         self.count = 0
 
     def car(self, car_x_coordinate, car_y_coordinate):
-        self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
-
+         self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
+        # if(p1=="(450.0, 480.0)"):
+        #     self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
+        # if (p1 == "(500.0, 480.0)"):
+        #     self.gameDisplay.blit(self.carImg1, (car_x_coordinate, car_y_coordinate))
+        # if (p1 == "(550.0, 480.0)"):
+        #     self.gameDisplay.blit(self.carImg2, (car_x_coordinate, car_y_coordinate))
+        # if (p1 == "(600.0, 480.0)"):
+        #     self.gameDisplay.blit(self.carImg3, (car_x_coordinate, car_y_coordinate))
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption('Car Dodge')
@@ -68,19 +75,16 @@ class CarRacing:
                     self.crashed = True
                 # print(event)
                 if (event.type == pygame.KEYDOWN):
+                    n.send(p1)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
                         self.car_x_coordinate += 50
 
-                        n.send(self.car_x_coordinate)
-
-                        print("p1=",p1, "x-coor",self.car_x_coordinate)
 
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     print ("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
-
             self.gameDisplay.fill(self.black)
             self.back_ground_raod()
 

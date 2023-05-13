@@ -8,8 +8,8 @@ import threading
 
 LISTENER_LIMIT = 5
 active_clients = []  # List of all currently connected users
-HOST = "197.161.174.185"
-PORT = 5555
+HOST = "127.0.0.1"
+PORT = 3000
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -34,11 +34,12 @@ def threaded_client(conn, player):
     global currentPlayer
     print("player",player)
     print("CurrentPlayer",currentPlayer)
-    conn.send(pickle.dumps(str(pos[player]) + Images[player]))
+    conn.send(pickle.dumps(str(pos[player])))
     reply = ""
     while True:
         try:
-            data = pickle.loads(conn.recv(2048*4).decode())
+            # data = pickle.decode_long(conn.recv(2048))
+            data = pickle.loads(conn.recv(2048))
             print("dataaaaa",data)
             pos[player] = data
 
@@ -49,13 +50,13 @@ def threaded_client(conn, player):
                 print("elseeee")
                 if player == 0:
                     reply = pos[0]
-                    print("reply",reply)
+                    print("reply 0",reply)
                 elif(player==1):
                     reply = pos[1]
-                    print("reply", reply)
+                    print("reply 1", reply)
                 elif(player==2):
                     reply = pos[2]
-                    print("reply", reply)
+                    print("reply 2", reply)
                 else:
                     reply = pos[3]
                     print("reply", reply)
@@ -63,7 +64,7 @@ def threaded_client(conn, player):
             print("Received: ", data)
             print("Sending : ", reply)
 
-            conn.sendall(str.encode(reply))
+            conn.sendall(pickle.dumps(reply))
         except:
             print("")
             break
@@ -79,7 +80,3 @@ while True:
         start_new_thread(threaded_client, (conn, currentPlayer))
         currentPlayer += 1
 
-
-#
-# if __name__ == '__main__':
-#     main()
