@@ -6,7 +6,7 @@ import pygame
 import threading
 
 
-LISTENER_LIMIT = 5
+LISTENER_LIMIT = 4
 active_clients = []  # List of all currently connected users
 HOST = "127.0.0.1"
 PORT = 3000
@@ -18,17 +18,17 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen(4)
+s.listen(LISTENER_LIMIT)
 print("Waiting for a connection, Server Started")
 
 
-pos = [(1000*0.45,600*0.8),(1000*0.5,600*0.8),(1000*0.55,600*0.8),(1000*0.6,600*0.8)]
+pos = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
 carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
 carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
 carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
 carImg3 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car3.png')
 Images=[".\\Car Racing Game using Pygame\\img\\car.png",".\\Car Racing Game using Pygame\\img\\car1.png",".\\Car Racing Game using Pygame\\img\\car2.png",".\\Car Racing Game using Pygame\\img\\car3.png"]
-
+ids=[]
 
 def threaded_client(conn, player):
     global currentPlayer
@@ -43,6 +43,8 @@ def threaded_client(conn, player):
             if(data=="quit"):
                 currentPlayer-=1
                 break
+            if(data=="GameOver"):
+                break
             print("dataaaaa",data)
             pos[player] = data
 
@@ -51,21 +53,21 @@ def threaded_client(conn, player):
                 break
             else:
                 if player == 0:
-                    reply = pos[0]
+                    reply = pos[ids[0]]
                     print("reply 0",reply)
                 elif(player==1):
-                    reply = pos[1]
+                    reply = pos[ids[1]]
                     print("reply 1", reply)
                 elif(player==2):
-                    reply = pos[2]
+                    reply = pos[ids[2]]
                     print("reply 2", reply)
                 else:
-                    reply = pos[3]
+                    reply = pos[ids[3]]
                     print("reply", reply)
 
             print("Received: ", data)
             print("Sending : ", reply)
-
+            print(pos)
             conn.sendall(pickle.dumps(reply))
         except:
             print("da5al fel except")
@@ -82,7 +84,8 @@ while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
     if(currentPlayer < 4):
+        ids.append(currentPlayer)
+        conn.send(pickle.dumps(str(currentPlayer)))
         start_new_thread(threaded_client, (conn, currentPlayer))
         currentPlayer += 1
-
 

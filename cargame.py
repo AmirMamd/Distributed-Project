@@ -1,8 +1,11 @@
 import pygame
+import re
+# import server
 from network import Network
 import random
 from time import sleep
 # from player import Player
+
 
 
 
@@ -19,18 +22,24 @@ class CarRacing:
         self.initialize(0)
 
     def initialize(self,x):
+        pos1 = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
         self.crashed = False
         if(x==0):
-            global n,p1
+            global n,p1,v
             n = Network()
             p1 = n.getP()
+            v=n.send(pos1[int(p1)])
+            x=re.split(r'[(,)]',v)
+            print("vvvvvvvvv=",x[1],x[2])
             print("p11111", p1)
+
         self.carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
         self.carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
         self.carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
         self.carImg3 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car3.png')
+        self.Images=[self.carImg,self.carImg1,self.carImg2,self.carImg3]
 
-        self.car_x_coordinate = (self.display_width * 0.45)
+        self.car_x_coordinate = float(x[1])
         self.car_y_coordinate = (self.display_height * 0.8)
 
         self.car_width = 49
@@ -53,7 +62,7 @@ class CarRacing:
         self.count = 0
 
     def car(self, car_x_coordinate, car_y_coordinate):
-         self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
+         self.gameDisplay.blit(self.Images[int(p1)], (car_x_coordinate, car_y_coordinate))
         # if(p1=="(450.0, 480.0)"):
         #     self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
         # if (p1 == "(500.0, 480.0)"):
@@ -77,6 +86,7 @@ class CarRacing:
                     self.crashed = True
                 # print(event)
                 if (event.type == pygame.KEYDOWN):
+                    print("v=",v)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
                         n.send((self.car_x_coordinate, self.car_y_coordinate))
