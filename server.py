@@ -40,6 +40,9 @@ def threaded_client(conn, player):
         try:
             # data = pickle.decode_long(conn.recv(2048))
             data = pickle.loads(conn.recv(2048))
+            if(data=="quit"):
+                currentPlayer-=1
+                break
             print("dataaaaa",data)
             pos[player] = data
 
@@ -47,7 +50,6 @@ def threaded_client(conn, player):
                 print("Disconnected")
                 break
             else:
-                print("elseeee")
                 if player == 0:
                     reply = pos[0]
                     print("reply 0",reply)
@@ -66,17 +68,21 @@ def threaded_client(conn, player):
 
             conn.sendall(pickle.dumps(reply))
         except:
-            print("")
+            print("da5al fel except")
             break
 
-    print("Lost connection")
-    conn.close()
+    if(data!="GameOver"):
+        print(currentPlayer,"currentPlayer")
+        print("Lost connection")
+        conn.close()
 
 currentPlayer=0
 while True:
+
     conn, addr = s.accept()
     print("Connected to:", addr)
     if(currentPlayer < 4):
         start_new_thread(threaded_client, (conn, currentPlayer))
         currentPlayer += 1
+
 

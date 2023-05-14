@@ -1,7 +1,5 @@
 import socket
 import pickle
-from dill import dumps
-import json
 
 
 class Network:

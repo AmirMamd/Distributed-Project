@@ -16,15 +16,15 @@ class CarRacing:
         self.clock = pygame.time.Clock()
         self.gameDisplay = None
 
-        self.initialize()
+        self.initialize(0)
 
-    def initialize(self):
+    def initialize(self,x):
         self.crashed = False
-        # m = Network()
-        global n,p1
-        n = Network()
-        p1 = n.getP()
-        print("p11111", p1)
+        if(x==0):
+            global n,p1
+            n = Network()
+            p1 = n.getP()
+            print("p11111", p1)
         self.carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
         self.carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
         self.carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
@@ -70,19 +70,20 @@ class CarRacing:
 
     def run_car(self):
         while not self.crashed:
+            # n.send((self.car_x_coordinate, self.car_y_coordinate))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    n.send("quit")
                     self.crashed = True
                 # print(event)
                 if (event.type == pygame.KEYDOWN):
-                    n.send(p1)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
+                        n.send((self.car_x_coordinate, self.car_y_coordinate))
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
                         self.car_x_coordinate += 50
-
-
+                        n.send((self.car_x_coordinate, self.car_y_coordinate))
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     print ("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
             self.gameDisplay.fill(self.black)
@@ -103,12 +104,16 @@ class CarRacing:
                 self.bg_speed += 1
             if self.car_y_coordinate < self.enemy_car_starty + self.enemy_car_height:
                 if self.car_x_coordinate > self.enemy_car_startx and self.car_x_coordinate < self.enemy_car_startx + self.enemy_car_width or self.car_x_coordinate + self.car_width > self.enemy_car_startx and self.car_x_coordinate + self.car_width < self.enemy_car_startx + self.enemy_car_width:
-                    self.crashed = True
+                    # self.crashed = True
+                    n.send("GameOver")
                     self.display_message("Game Over !!!")
 
+
             if self.car_x_coordinate < 150 or self.car_x_coordinate > 550:
-                self.crashed = True
+                # self.crashed = True
+                n.send("GameOver")
                 self.display_message("Game Over !!!")
+
             pygame.display.update()
             self.clock.tick(60)
 
@@ -121,7 +126,7 @@ class CarRacing:
         pygame.display.update()
         self.clock.tick(60)
         sleep(1)
-        car_racing.initialize()
+        car_racing.initialize(1)
         car_racing.racing_window()
 
     def back_ground_raod(self):
