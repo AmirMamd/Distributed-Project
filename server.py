@@ -56,7 +56,8 @@ def threaded_client(conn, player):
 
 
             print("dataaaaa",data)
-            pos[player] = data
+            if(data!="GameOver"):
+                pos[player] = data
 
             if not data:
                 print("Disconnected")

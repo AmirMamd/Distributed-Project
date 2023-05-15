@@ -37,6 +37,7 @@ class CarRacing:
             s.clear()
 
 
+
         self.carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
         self.carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
         self.carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
@@ -67,13 +68,13 @@ class CarRacing:
 
     def car(self, car_x_coordinate, car_y_coordinate):
          self.gameDisplay.blit(self.Images[int(p1)], (car_x_coordinate, car_y_coordinate))
-        # if(p1=="(450.0, 480.0)"):
+        # if(p1=="0"):
         #     self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
-        # if (p1 == "(500.0, 480.0)"):
+        # if (p1 == "1"):
         #     self.gameDisplay.blit(self.carImg1, (car_x_coordinate, car_y_coordinate))
-        # if (p1 == "(550.0, 480.0)"):
+        # if (p1 == "2"):
         #     self.gameDisplay.blit(self.carImg2, (car_x_coordinate, car_y_coordinate))
-        # if (p1 == "(600.0, 480.0)"):
+        # if (p1 == "3"):
         #     self.gameDisplay.blit(self.carImg3, (car_x_coordinate, car_y_coordinate))
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
