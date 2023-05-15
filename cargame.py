@@ -25,13 +25,17 @@ class CarRacing:
         pos1 = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
         self.crashed = False
         if(x==0):
-            global n,p1,v
+            global n,p1,v,x1
             n = Network()
             p1 = n.getP()
-            v=n.send(pos1[int(p1)])
-            x=re.split(r'[(,)]',v)
-            print("vvvvvvvvv=",x[1],x[2])
             print("p11111", p1)
+            v=n.send(pos1[int(p1)])
+            print("v=",v)
+            s=re.split(r'[(,)]',v)
+            print("vvvvvvvvv=",s[1],s[2])
+            x1=s[1]
+            s.clear()
+
 
         self.carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
         self.carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
@@ -39,7 +43,7 @@ class CarRacing:
         self.carImg3 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car3.png')
         self.Images=[self.carImg,self.carImg1,self.carImg2,self.carImg3]
 
-        self.car_x_coordinate = float(x[1])
+        self.car_x_coordinate = float(x1)
         self.car_y_coordinate = (self.display_height * 0.8)
 
         self.car_width = 49
@@ -82,6 +86,7 @@ class CarRacing:
             # n.send((self.car_x_coordinate, self.car_y_coordinate))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    n.send(p1)
                     n.send("quit")
                     self.crashed = True
                 # print(event)

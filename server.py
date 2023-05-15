@@ -29,10 +29,11 @@ carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
 carImg3 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car3.png')
 Images=[".\\Car Racing Game using Pygame\\img\\car.png",".\\Car Racing Game using Pygame\\img\\car1.png",".\\Car Racing Game using Pygame\\img\\car2.png",".\\Car Racing Game using Pygame\\img\\car3.png"]
 ids=[]
+indices=[]
 
 def threaded_client(conn, player):
     global currentPlayer
-    print("player",player)
+    print("id of current player =",player)  #player holds the id of the current player
     print("CurrentPlayer",currentPlayer)
     conn.send(pickle.dumps(str(pos[player])))
     reply = ""
@@ -41,17 +42,26 @@ def threaded_client(conn, player):
             # data = pickle.decode_long(conn.recv(2048))
             data = pickle.loads(conn.recv(2048))
             if(data=="quit"):
+                print("da5al fel quit")
                 currentPlayer-=1
                 break
-            if(data=="GameOver"):
-                break
+
+            # if(data=="GameOver"):
+            #     continue
+
+            if(data=="0" or data=="1" or data=="2" or data=="3"): #Data holds the ID of the player who is quitting
+                print("ids.index(data)",ids.index(int(data)))
+                indices.append(ids.index(int(data)))
+                continue
+
+
             print("dataaaaa",data)
             pos[player] = data
 
             if not data:
                 print("Disconnected")
                 break
-            else:
+            elif(data!="GameOver"):
                 if player == 0:
                     reply = pos[ids[0]]
                     print("reply 0",reply)
@@ -84,8 +94,18 @@ while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
     if(currentPlayer < 4):
-        ids.append(currentPlayer)
-        conn.send(pickle.dumps(str(currentPlayer)))
-        start_new_thread(threaded_client, (conn, currentPlayer))
+        print(" abl el if   indices[0]",indices,"ids",ids)
+        if(len(indices)>0):
+            print("indices[0]", indices[0], "indices=",indices)
+            ids[indices[0]]=indices[0]
+            conn.send(pickle.dumps(str(indices[0])))
+            start_new_thread(threaded_client, (conn, indices[0]))
+            indices.pop(0)
+            print("indices[0]", indices, "ids=", ids)
+        else:
+            ids.append(currentPlayer)
+            conn.send(pickle.dumps(str(currentPlayer)))
+            start_new_thread(threaded_client, (conn, currentPlayer))
+            print("ids be current player 3ady")
         currentPlayer += 1
 

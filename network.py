@@ -27,10 +27,7 @@ class Network:
     def send(self, data):
         try:
             self.client.send((pickle.dumps(data)))
-            # print("gena henaaa",data)
-            # print("gena henaaa1", pickle.dumps(data))
-            # print("self.client.recv(2048)",self.client.recv(2048))
-            # print("recccc", pickle.loads(self.client.recv(2048)))
             return pickle.loads(self.client.recv(2048))
+
         except socket.error as e:
             print(e)
