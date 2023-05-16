@@ -1,11 +1,8 @@
 import pygame
 import re
-# import server
 from network import Network
 import random
 from time import sleep
-# from player import Player
-
 
 
 
@@ -18,23 +15,33 @@ class CarRacing:
         self.white = (255, 255, 255)
         self.clock = pygame.time.Clock()
         self.gameDisplay = None
-
+        # self.const=310
         self.initialize(0)
 
     def initialize(self,x):
         pos1 = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
         self.crashed = False
         if(x==0):
-            global n,p1,v,x1
+            global n,p1,x1,v
             n = Network()
             p1 = n.getP()
+            v=[]
+            # cp+= 1
+            # print("cp=",cp)
             print("p11111", p1)
-            v=n.send(pos1[int(p1)])
-            print("v=",v)
-            s=re.split(r'[(,)]',v)
-            print("vvvvvvvvv=",s[1],s[2])
-            x1=s[1]
-            s.clear()
+            n.send(pos1[int(p1)])
+            # print("v=",v)
+            # s=re.split(r'[(,)]',v)
+            # print("vvvvvvvvv=",s[1],s[2])
+            # x1=s[1]
+            # s.clear()
+            x=str(pos1[int(p1)])
+            s = re.split(r'[(,]', x)
+            x1=float(s[1])
+        # print("bara el x=0 v=", v)
+
+
+
 
 
 
@@ -46,11 +53,15 @@ class CarRacing:
 
         self.car_x_coordinate = float(x1)
         self.car_y_coordinate = (self.display_height * 0.8)
-
+        self.id=0
         self.car_width = 49
 
         # enemy_car
         self.enemy_car = pygame.image.load('.\\Car Racing Game using Pygame\\img\\enemy_car_1.png')
+        # for self.const in range(self.const,450):
+        #     if (self.const%2==0):
+        #         self.enemy_car_startx=self.const
+        #         self.const+=2
         self.enemy_car_startx = random.randrange(310, 450)
         self.enemy_car_starty = -600
         self.enemy_car_speed = 5
@@ -66,16 +77,10 @@ class CarRacing:
         self.bg_speed = 3
         self.count = 0
 
-    def car(self, car_x_coordinate, car_y_coordinate):
-         self.gameDisplay.blit(self.Images[int(p1)], (car_x_coordinate, car_y_coordinate))
-        # if(p1=="0"):
-        #     self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
-        # if (p1 == "1"):
-        #     self.gameDisplay.blit(self.carImg1, (car_x_coordinate, car_y_coordinate))
-        # if (p1 == "2"):
-        #     self.gameDisplay.blit(self.carImg2, (car_x_coordinate, car_y_coordinate))
-        # if (p1 == "3"):
-        #     self.gameDisplay.blit(self.carImg3, (car_x_coordinate, car_y_coordinate))
+    def car(self, car_x_coordinate, car_y_coordinate, id):
+        print("car_x_coordinate",car_x_coordinate, "id",id)
+        self.gameDisplay.blit(self.Images[int(id)], (car_x_coordinate, car_y_coordinate))
+
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption('Car Dodge')
@@ -83,23 +88,30 @@ class CarRacing:
         self.run_car()
 
     def run_car(self):
+        global v
+        # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
         while not self.crashed:
+            v = n.send((self.car_x_coordinate, self.car_y_coordinate))
+            # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
             # n.send((self.car_x_coordinate, self.car_y_coordinate))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    print("p1=",p1)
+                    v = n.send((self.car_x_coordinate, self.car_y_coordinate))
                     n.send(p1)
                     n.send("quit")
                     self.crashed = True
-                # print(event)
                 if (event.type == pygame.KEYDOWN):
-                    print("v=",v)
+                    # print("v=",v)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
-                        n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        # v=n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
                         self.car_x_coordinate += 50
-                        n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     print ("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
             self.gameDisplay.fill(self.black)
@@ -111,8 +123,23 @@ class CarRacing:
             if self.enemy_car_starty > self.display_height:
                 self.enemy_car_starty = 0 - self.enemy_car_height
                 self.enemy_car_startx = random.randrange(310, 450)
+            print("v fo2 5ales=", v)
 
-            self.car(self.car_x_coordinate, self.car_y_coordinate)
+            self.id = p1
+            self.car(self.car_x_coordinate, self.car_y_coordinate, self.id)
+
+
+            for a in range(len(v)):
+                if(a%2==0):
+                    print("a=",a)
+                    s = re.split(r'[(,)]', str(v[a]) )
+                    print("V[x]=",v[a])
+                    print("v[1]",v[1])
+                    x1 = float(s[1])
+                    print("x1=",x1)
+                    self.id=(v[a+1])
+                    self.car(x1, self.car_y_coordinate,self.id)
+
             self.highscore(self.count)
             self.count += 1
             if (self.count % 100 == 0):
@@ -171,11 +198,8 @@ class CarRacing:
         text = font.render("Thanks for playing!", True, self.white)
         self.gameDisplay.blit(text, (600, 520))
 
-
-# class Player:
-#     def __init__(self):
-
-
 if __name__ == '__main__':
+    # global cp
+    # cp=-1
     car_racing = CarRacing()
     car_racing.racing_window()

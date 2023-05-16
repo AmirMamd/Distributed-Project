@@ -33,7 +33,7 @@ def threaded_client(conn, player):
     global currentPlayer
     print("id of current player =",player)  #player holds the id of the current player
     print("CurrentPlayer",currentPlayer)
-    conn.send(pickle.dumps(str(pos[player])))
+    # conn.send(pickle.dumps(str(pos[player])))
     reply = []
     flag=0
     flag1=0
@@ -43,12 +43,10 @@ def threaded_client(conn, player):
             data = pickle.loads(conn.recv(2048))
             if(data=="quit"):
                 print("da5al fel quit")
+                conn.send(pickle.dumps("Quitted"))
                 currentPlayer-=1
+
                 break
-
-            # if(data=="GameOver"):
-            #     continue
-
             if(data=="0" or data=="1" or data=="2" or data=="3"): #Data holds the ID of the player who is quitting
                 print("ids.index(data)",ids.index(int(data)))
                 indices.append(ids.index(int(data)))
@@ -94,7 +92,9 @@ def threaded_client(conn, player):
             print("Received: ", data)
             print("Sending : ", reply)
             print(pos)
+            # if(data!="quit"):
             conn.sendall(pickle.dumps(reply))
+            print("mirnaaaaaaaa")
         except:
             print("da5al fel except")
             break
