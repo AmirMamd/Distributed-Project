@@ -28,9 +28,10 @@ carImg3 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car3.png')
 Images=[".\\Car Racing Game using Pygame\\img\\car.png",".\\Car Racing Game using Pygame\\img\\car1.png",".\\Car Racing Game using Pygame\\img\\car2.png",".\\Car Racing Game using Pygame\\img\\car3.png"]
 ids=[]
 indices=[]
+flagx=-1
 
 def threaded_client(conn, player):
-    global currentPlayer
+    global currentPlayer,flagx
     print("id of current player =",player)  #player holds the id of the current player
     print("CurrentPlayer",currentPlayer)
     # conn.send(pickle.dumps(str(pos[player])))
@@ -41,22 +42,22 @@ def threaded_client(conn, player):
         try:
             # data = pickle.decode_long(conn.recv(2048))
             data = pickle.loads(conn.recv(2048))
+            for u in range(len(reply)):
+                if (flagx == reply[u]):
+                    reply.pop(u)
+                    reply.pop((u - 1))
+                    flagx=-1
+
             if(data=="quit"):
-                print("da5al fel quit")
                 conn.send(pickle.dumps("Quitted"))
                 currentPlayer-=1
-
                 break
+
             if(data=="0" or data=="1" or data=="2" or data=="3"): #Data holds the ID of the player who is quitting
                 print("ids.index(data)",ids.index(int(data)))
                 indices.append(ids.index(int(data)))
-                for u in range(len(reply)):
-                    if(int(data)==reply[u]):
-
-                        reply.pop(u)
-                        reply.pop((u-1))
-
-                print("reply foooooo2222",reply)
+                flagx=int(data)
+                conn.send(pickle.dumps(reply))
                 continue
 
 
@@ -124,5 +125,4 @@ while True:
             start_new_thread(threaded_client, (conn, currentPlayer))
             print("ids be current player 3ady")
         conn.send(pickle.dumps(indices))
-        currentPlayer += 1
-
+        currentPlayer+=1

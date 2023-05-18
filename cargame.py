@@ -26,24 +26,11 @@ class CarRacing:
             n = Network()
             p1 = n.getP()
             v=[]
-            # cp+= 1
-            # print("cp=",cp)
             print("p11111", p1)
             n.send(pos1[int(p1)])
-            # print("v=",v)
-            # s=re.split(r'[(,)]',v)
-            # print("vvvvvvvvv=",s[1],s[2])
-            # x1=s[1]
-            # s.clear()
             x=str(pos1[int(p1)])
             s = re.split(r'[(,]', x)
             x1=float(s[1])
-        # print("bara el x=0 v=", v)
-
-
-
-
-
 
         self.carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
         self.carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
@@ -58,10 +45,6 @@ class CarRacing:
 
         # enemy_car
         self.enemy_car = pygame.image.load('.\\Car Racing Game using Pygame\\img\\enemy_car_1.png')
-        # for self.const in range(self.const,450):
-        #     if (self.const%2==0):
-        #         self.enemy_car_startx=self.const
-        #         self.const+=2
         self.enemy_car_startx = random.randrange(310, 450)
         self.enemy_car_starty = -600
         self.enemy_car_speed = 5
@@ -92,12 +75,11 @@ class CarRacing:
         # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
         while not self.crashed:
             v = n.send((self.car_x_coordinate, self.car_y_coordinate))
-            # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
             # n.send((self.car_x_coordinate, self.car_y_coordinate))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    print("p1=",p1)
-                    v = n.send((self.car_x_coordinate, self.car_y_coordinate))
+                    # print("p1=",p1)
+                    # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
                     n.send(p1)
                     n.send("quit")
                     self.crashed = True
@@ -110,7 +92,7 @@ class CarRacing:
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
                         self.car_x_coordinate += 50
-                        # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        v = n.send((self.car_x_coordinate, self.car_y_coordinate))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     print ("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
@@ -199,7 +181,5 @@ class CarRacing:
         self.gameDisplay.blit(text, (600, 520))
 
 if __name__ == '__main__':
-    # global cp
-    # cp=-1
     car_racing = CarRacing()
     car_racing.racing_window()
