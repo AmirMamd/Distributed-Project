@@ -29,9 +29,10 @@ Images=[".\\Car Racing Game using Pygame\\img\\car.png",".\\Car Racing Game usin
 ids=[]
 indices=[]
 flagx=-1
+counter=0
 
 def threaded_client(conn, player):
-    global currentPlayer,flagx
+    global currentPlayer,flagx,counter
     print("id of current player =",player)  #player holds the id of the current player
     print("CurrentPlayer",currentPlayer)
     # conn.send(pickle.dumps(str(pos[player])))
@@ -42,13 +43,26 @@ def threaded_client(conn, player):
         try:
             # data = pickle.decode_long(conn.recv(2048))
             data = pickle.loads(conn.recv(2048))
-            for u in range(len(reply)):
-                if (flagx == reply[u]):
-                    reply.pop(u)
-                    reply.pop((u - 1))
-                    flagx=-1
+            print("dataaaaaa",data)
+            print("player=", int(player))
+
+            if(flagx!=-1):
+                for u in range(len(reply)):
+                    if (flagx == reply[u]):
+                        print("replyyy foooooo2 abl el pop", reply)
+                        reply.pop(u)
+                        reply.pop((u - 1))
+                        counter+=1
+                        if(counter==currentPlayer):
+                            flagx=-1
+                        conn.send(pickle.dumps(reply))
+                        print("replyyy foooooo2",reply)
+                        break
+
+                conn.send(pickle.dumps(reply))
 
             if(data=="quit"):
+                print("quitttt")
                 conn.send(pickle.dumps("Quitted"))
                 currentPlayer-=1
                 break
@@ -59,7 +73,6 @@ def threaded_client(conn, player):
                 flagx=int(data)
                 conn.send(pickle.dumps(reply))
                 continue
-
 
             print("dataaaaa",data)
             if(data!="GameOver"):

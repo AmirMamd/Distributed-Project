@@ -83,11 +83,12 @@ class CarRacing:
                     n.send(p1)
                     n.send("quit")
                     self.crashed = True
+
                 if (event.type == pygame.KEYDOWN):
-                    # print("v=",v)
+                    print("v=",v)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
-                        # v=n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        v=n.send((self.car_x_coordinate, self.car_y_coordinate))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
