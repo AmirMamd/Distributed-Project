@@ -141,8 +141,15 @@ class CarRacing:
         self.count = 0
 
     def car(self, car_x_coordinate, car_y_coordinate, id):
+        global v,user
+        print("kerkerker",user)
         print("car_x_coordinate",car_x_coordinate, "id",id)
         self.gameDisplay.blit(self.Images[int(id)], (car_x_coordinate, car_y_coordinate))
+        for rep in range(len(v)):
+            if(rep==int(id)*3):
+                self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render((str(v[rep][1])), True, self.white),(car_x_coordinate, car_y_coordinate + self.enemy_car_height))
+
+        # self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render(user), True, self.white), (0,countt))
 
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
@@ -189,6 +196,7 @@ class CarRacing:
 
             self.id = p1
             self.car(self.car_x_coordinate, self.car_y_coordinate, self.id)
+            self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render((user), True, self.white), (self.car_x_coordinate,self.car_y_coordinate+self.enemy_car_height))
 
 
             for a in range(len(v)):
