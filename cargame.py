@@ -173,9 +173,20 @@ class CarRacing:
         self.gameDisplay.blit(self.enemy_car, (thingx, thingy))
 
     def highscore(self, count):
+        global v
+        print("v gowa highscore=",v)
         font = pygame.font.SysFont("arial", 20)
-        text = font.render("Score : " + str(count), True, self.white)
+        text = font.render("Score of player "+ p1 +": " + str(count), True, self.white)
         self.gameDisplay.blit(text, (0, 0))
+        countt=20
+        for rep in range(len(v)):
+            if(rep%3==2):
+                self.gameDisplay.blit(font.render("Score of player "+ str(v[rep-1]) +": " + str(v[rep]), True, self.white), (0,countt))
+                countt+=20
+
+
+
+
 
     def display_credit(self):
         font = pygame.font.SysFont("lucidaconsole", 14)
