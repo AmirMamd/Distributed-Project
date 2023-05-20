@@ -1,8 +1,75 @@
+import time
+
 import pygame
 import re
 from network import Network
 import random
 from time import sleep
+import pygame_gui
+import sys
+class Welcome:
+    def __int__(self):
+        pygame.init()
+        self.WIDTH, self.HEIGHT = 1000, 600
+        self.SCREEN = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        pygame.display.set_caption("car dodge")
+
+        self.manager = pygame_gui.UIManager((1000, 600))
+
+        self.text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((150, 275), (600, 50)), manager=self.manager,
+                                                         object_id='#main_text_entry')
+
+        self.clock = pygame.time.Clock()
+        self.get_user_name(self.clock,self.manager,self.SCREEN,self.WIDTH,self.HEIGHT)
+
+    def show_user_name(self,user_name,SCREEN,WIDTH,HEIGHT,clock):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            SCREEN.fill("white")
+
+            new_text = pygame.font.SysFont("bahnschrift", 100).render(f"Hello, {user_name}", True, "black")
+            new_text_rect = new_text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+            SCREEN.blit(new_text, new_text_rect)
+
+            clock.tick(60)
+
+            pygame.display.update()
+
+            sleep(1)
+            break
+
+        # car_racing.racing_window()
+
+    def get_user_name(self,clock,manager,SCREEN,WIDTH,HEIGHT):
+        while True:
+
+            UI_REFRESH_RATE = clock.tick(60) / 1000
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
+                        event.ui_object_id == '#main_text_entry'):
+                    self.show_user_name(event.text,SCREEN,WIDTH,HEIGHT,clock)
+
+                manager.process_events(event)
+
+            manager.update(UI_REFRESH_RATE)
+
+            SCREEN.fill("white")
+
+            manager.draw_ui(SCREEN)
+
+            # pygame.display.update()
+            new_text = pygame.font.SysFont("bahnschrift", 50).render(f"Enter username", True, "black")
+            new_text_rect = new_text.get_rect(center=(WIDTH / 4, HEIGHT / 4))
+            SCREEN.blit(new_text, new_text_rect)
+            # clock.tick(60)
+            pygame.display.update()
 
 
 
@@ -15,13 +82,88 @@ class CarRacing:
         self.white = (255, 255, 255)
         self.clock = pygame.time.Clock()
         self.gameDisplay = None
-        # self.const=310
+        # self.WIDTH, self.HEIGHT = 1000, 600
+        # self.SCREEN = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        # self.manager = pygame_gui.UIManager((1000, 600))
+        #
+        # self.text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((150, 275), (600, 50)),
+        #                                                       manager=self.manager,
+        #                                                       object_id='#main_text_entry')
+        # # self.const=310
+        # self.get_user_name(self.clock, self.manager, self.SCREEN, self.WIDTH, self.HEIGHT)
         self.initialize(0)
 
+    def show_user_name(self,user_name,SCREEN,WIDTH,HEIGHT,clock):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            SCREEN.fill("white")
+
+            new_text = pygame.font.SysFont("bahnschrift", 100).render(f"Hello, {user_name}", True, "black")
+            new_text_rect = new_text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+            SCREEN.blit(new_text, new_text_rect)
+
+            clock.tick(60)
+
+            pygame.display.update()
+
+            sleep(1)
+            break
+        #self.initialize(0)
+    def get_user_name(self,clock,manager,SCREEN,WIDTH,HEIGHT):
+        flag=0
+        while True:
+
+            UI_REFRESH_RATE = clock.tick(60) / 1000
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
+                        event.ui_object_id == '#main_text_entry'):
+                    self.show_user_name(event.text,SCREEN,WIDTH,HEIGHT,clock)
+                    flag=1
+                    break
+
+                manager.process_events(event)
+
+            manager.update(UI_REFRESH_RATE)
+
+            SCREEN.fill("white")
+
+            manager.draw_ui(SCREEN)
+
+            # pygame.display.update()
+            new_text = pygame.font.SysFont("bahnschrift", 50).render(f"Enter username", True, "black")
+            new_text_rect = new_text.get_rect(center=(WIDTH / 4, HEIGHT / 4))
+            SCREEN.blit(new_text, new_text_rect)
+            # clock.tick(60)
+            pygame.display.update()
+            if(flag==1):
+                flag=0
+                break
+
+
     def initialize(self,x):
+        # pygame.display.update()
         pos1 = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
         self.crashed = False
         if(x==0):
+            self.WIDTH, self.HEIGHT = 1000, 600
+            self.SCREEN = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+            pygame.display.set_caption("car dodge")
+
+            self.manager = pygame_gui.UIManager((1000, 600))
+
+            self.text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((150, 275), (600, 50)),
+                                                                  manager=self.manager,
+                                                                  object_id='#main_text_entry')
+
+            self.clock = pygame.time.Clock()
+            self.get_user_name(self.clock, self.manager, self.SCREEN, self.WIDTH, self.HEIGHT)
             global n,p1,x1,v
             n = Network()
             p1 = n.getP()
@@ -67,7 +209,6 @@ class CarRacing:
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption('Car Dodge')
-
         self.run_car()
 
     def run_car(self):
@@ -183,9 +324,6 @@ class CarRacing:
             if(rep%3==2):
                 self.gameDisplay.blit(font.render("Score of player "+ str(v[rep-1]) +": " + str(v[rep]), True, self.white), (0,countt))
                 countt+=20
-
-
-
 
 
     def display_credit(self):
