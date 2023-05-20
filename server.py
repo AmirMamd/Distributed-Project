@@ -2,6 +2,7 @@ import socket
 from _thread import *
 import pickle
 import pygame
+import re
 
 
 LISTENER_LIMIT = 4
@@ -19,7 +20,7 @@ except socket.error as e:
 s.listen(LISTENER_LIMIT)
 print("Waiting for a connection, Server Started")
 
-
+scores=[0,0,0,0]
 pos = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
 carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
 carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
@@ -75,13 +76,17 @@ def threaded_client(conn, player):
                 continue
 
             print("dataaaaa",data)
-            if(data!="GameOver"):
+            s = re.split(r'[(,)]', str(data))
+            if(data!="GameOver" and len(s)>1):
                 pos[player] = data
 
             if not data:
                 print("Disconnected")
                 break
             elif(data!="GameOver"):
+                if(len(s)==1):
+                    scores[player]=int(data)
+                    print("scores=",scores)
                 for i in range(len(ids)):
                     for j in range(len(indices)):
                         if(ids[i]==indices[j] or ids[i]==int(player)):

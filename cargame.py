@@ -126,6 +126,7 @@ class CarRacing:
             self.highscore(self.count)
             self.count += 1
             if (self.count % 100 == 0):
+                n.send(self.count)
                 self.enemy_car_speed += 1
                 self.bg_speed += 1
             if self.car_y_coordinate < self.enemy_car_starty + self.enemy_car_height:
