@@ -51,8 +51,9 @@ def threaded_client(conn, player):
                 for u in range(len(reply)):
                     if (flagx == reply[u]):
                         print("replyyy foooooo2 abl el pop", reply)
+                        reply.pop(u+1)
                         reply.pop(u)
-                        reply.pop((u - 1))
+                        reply.pop(u - 1)
                         counter+=1
                         if(counter==currentPlayer):
                             flagx=-1
@@ -96,13 +97,15 @@ def threaded_client(conn, player):
                     if(flag==0 and i!=int(player)):
                         print("i=",i,"ids=",ids, "int player",int(player))
                         for k in range(len(reply)):
-                            if(k%2==1 and i==reply[k]):
+                            if(k%3==1 and i==reply[k]):
                                 flag1=1
                                 reply[k-1]=pos[i]
+                                reply[k+1]=scores[i]
                                 print("replyyyy men 3'er flag 1", reply)
                         if(flag1==0):
                             reply.append(pos[i]) #here reply holds the position of the cars that are in game excluding the current player
                             reply.append(i)
+                            reply.append(scores[i])
                             print("replyyyy b flag 1", reply)
                     flag=0
                     flag1=0

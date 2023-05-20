@@ -113,7 +113,7 @@ class CarRacing:
 
 
             for a in range(len(v)):
-                if(a%2==0):
+                if(a%3==0):
                     print("a=",a)
                     s = re.split(r'[(,)]', str(v[a]) )
                     print("V[x]=",v[a])
