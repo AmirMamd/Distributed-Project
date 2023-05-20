@@ -21,7 +21,7 @@ print("Waiting for a connection, Server Started")
 
 users=[]
 scores=[0,0,0,0]
-pos = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
+pos = [(1000*0.2,''),(1000*0.3,''),(1000*0.4,''),(1000*0.5,'')]
 carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
 carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
 carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
@@ -33,7 +33,7 @@ flagx=-1
 counter=0
 
 def threaded_client(conn, player):
-    global currentPlayer,flagx,counter
+    global currentPlayer,flagx,counter,pos
     print("id of current player =",player)  #player holds the id of the current player
     print("CurrentPlayer",currentPlayer)
     # conn.send(pickle.dumps(str(pos[player])))
@@ -90,7 +90,9 @@ def threaded_client(conn, player):
                     print("scores=",scores)
                 if (len(s) == 3):
                     users.append(s[1])
+                    pos[player]=(pos[player][0],s[1])
                     print("users=", users)
+                    print("possss",pos)
                 for i in range(len(ids)):
                     for j in range(len(indices)):
                         if(ids[i]==indices[j] or ids[i]==int(player)):

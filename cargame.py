@@ -107,11 +107,11 @@ class CarRacing:
             p1 = n.getP()
             v=[]
             print("p11111", p1)
+            n.send("(" + user + ")")
             n.send(pos1[int(p1)])
             x=str(pos1[int(p1)])
             s = re.split(r'[(,]', x)
             x1=float(s[1])
-            n.send("("+user+")")
         self.carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
         self.carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
         self.carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
@@ -150,10 +150,10 @@ class CarRacing:
         self.run_car()
 
     def run_car(self):
-        global v
+        global v,user
         # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
         while not self.crashed:
-            v = n.send((self.car_x_coordinate, self.car_y_coordinate))
+            v = n.send((self.car_x_coordinate, user))
             # n.send((self.car_x_coordinate, self.car_y_coordinate))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -167,12 +167,12 @@ class CarRacing:
                     print("v=",v)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
-                        v=n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        v=n.send((self.car_x_coordinate, user))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
                         self.car_x_coordinate += 50
-                        v = n.send((self.car_x_coordinate, self.car_y_coordinate))
+                        v = n.send((self.car_x_coordinate, user))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     print ("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
@@ -252,15 +252,15 @@ class CarRacing:
         self.gameDisplay.blit(self.enemy_car, (thingx, thingy))
 
     def highscore(self, count):
-        global v
+        global v,user
         print("v gowa highscore=",v)
         font = pygame.font.SysFont("arial", 20)
-        text = font.render("Score of player "+ p1 +": " + str(count), True, self.white)
+        text = font.render("Score of player "+ user +": " + str(count), True, self.white)
         self.gameDisplay.blit(text, (0, 0))
         countt=20
         for rep in range(len(v)):
-            if(rep%3==2):
-                self.gameDisplay.blit(font.render("Score of player "+ str(v[rep-1]) +": " + str(v[rep]), True, self.white), (0,countt))
+            if(rep%3==0):
+                self.gameDisplay.blit(font.render("Score of player "+ str(v[rep][1]) +": " + str(v[rep+2]), True, self.white), (0,countt))
                 countt+=20
 
 
