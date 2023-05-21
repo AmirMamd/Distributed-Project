@@ -140,14 +140,16 @@ class CarRacing:
         self.bg_speed = 3
         self.count = 0
 
-    def car(self, car_x_coordinate, car_y_coordinate, id):
+    def car(self, car_x_coordinate, car_y_coordinate, id,a):
         global v,user
         print("kerkerker",user)
         print("car_x_coordinate",car_x_coordinate, "id",id)
         self.gameDisplay.blit(self.Images[int(id)], (car_x_coordinate, car_y_coordinate))
         for rep in range(len(v)):
-            if(rep==int(id)*3):
+            if(rep==a and a!=-1):
+                print("gena hena awii", v)
                 self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render((str(v[rep][1])), True, self.white),(car_x_coordinate, car_y_coordinate + self.enemy_car_height))
+
 
         # self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render(user), True, self.white), (0,countt))
 
@@ -195,7 +197,7 @@ class CarRacing:
             print("v fo2 5ales=", v)
 
             self.id = p1
-            self.car(self.car_x_coordinate, self.car_y_coordinate, self.id)
+            self.car(self.car_x_coordinate, self.car_y_coordinate, self.id,-1)
             self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render((user), True, self.white), (self.car_x_coordinate,self.car_y_coordinate+self.enemy_car_height))
 
 
@@ -208,7 +210,7 @@ class CarRacing:
                     x1 = float(s[1])
                     print("x1=",x1)
                     self.id=(v[a+1])
-                    self.car(x1, self.car_y_coordinate,self.id)
+                    self.car(x1, self.car_y_coordinate,self.id,a)
 
             self.highscore(self.count)
             self.count += 1
