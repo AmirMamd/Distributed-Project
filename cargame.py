@@ -14,7 +14,7 @@ class CarRacing:
         self.display_width = 1000
         self.display_height = 600
         self.black = (0, 0, 0)
-        self.ScoreArray=[(0,''),(0,''),(0,''),(0,'')]
+        # self.ScoreArray=[(0,''),(0,''),(0,''),(0,'')]
         self.white = (255, 255, 255)
         self.clock = pygame.time.Clock()
         self.gameDisplay = None
@@ -263,22 +263,27 @@ class CarRacing:
         self.gameDisplay.blit(self.enemy_car, (thingx, thingy))
 
     def highscore(self, count):
+        ScoreArray = [(0, ''), (0, ''), (0, ''), (0, '')]
+        print("bos ba2a score array",ScoreArray)
         global v,user
         print("v gowa highscore=",v)
         font = pygame.font.SysFont("arial", 20)
-        self.ScoreArray[0] = (int(count), str(user))
-        text = font.render("Score of player "+ user +": " + str(count), True, self.white)
+        ScoreArray[0] = (int(count), str(user))
+        # text = font.render("Score of player "+ user +": " + str(count), True, self.white)
         # self.gameDisplay.blit(text, (0, 0))
-        # for p in range(len(v)/3):
         p=0
         for l in range (len(v)):
             if (l % 3 == 0):
                 p+=1
-                self.ScoreArray[p] = (int(v[l + 2]), str(v[l][1]))
-        print("ScoreArray",self.ScoreArray)
+                ScoreArray[p] = (int(v[l + 2]), str(v[l][1]))
+        print("ScoreArray",ScoreArray)
 
-        sorted_array = sorted(self.ScoreArray, key=lambda x: x[0],reverse=True)
+
+        sorted_array = sorted(ScoreArray, key=lambda x: x[0],reverse=True)
         print("sorted_array",sorted_array)
+
+        # for x in range (len(sorted_array)):
+        #     for b in range (len(v))
 
         countt = 0
         for rep in range(len(sorted_array)):
