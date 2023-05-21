@@ -14,6 +14,7 @@ class CarRacing:
         self.display_width = 1000
         self.display_height = 600
         self.black = (0, 0, 0)
+        self.ScoreArray=[(0,''),(0,''),(0,''),(0,'')]
         self.white = (255, 255, 255)
         self.clock = pygame.time.Clock()
         self.gameDisplay = None
@@ -265,14 +266,25 @@ class CarRacing:
         global v,user
         print("v gowa highscore=",v)
         font = pygame.font.SysFont("arial", 20)
+        self.ScoreArray[0] = (int(count), str(user))
         text = font.render("Score of player "+ user +": " + str(count), True, self.white)
-        self.gameDisplay.blit(text, (0, 0))
-        countt=20
-        for rep in range(len(v)):
-            if(rep%3==0):
-                self.gameDisplay.blit(font.render("Score of player "+ str(v[rep][1]) +": " + str(v[rep+2]), True, self.white), (0,countt))
-                countt+=20
+        # self.gameDisplay.blit(text, (0, 0))
+        # for p in range(len(v)/3):
+        p=0
+        for l in range (len(v)):
+            if (l % 3 == 0):
+                p+=1
+                self.ScoreArray[p] = (int(v[l + 2]), str(v[l][1]))
+        print("ScoreArray",self.ScoreArray)
 
+        sorted_array = sorted(self.ScoreArray, key=lambda x: x[0],reverse=True)
+        print("sorted_array",sorted_array)
+
+        countt = 0
+        for rep in range(len(sorted_array)):
+            if( str(sorted_array[rep][1])!=''):
+                self.gameDisplay.blit(font.render("Score of player " + str(sorted_array[rep][1]) + ": " + str(sorted_array[rep][0]), True, self.white),(0, countt))
+            countt += 20
 
     def display_credit(self):
         font = pygame.font.SysFont("lucidaconsole", 14)
