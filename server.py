@@ -1,9 +1,10 @@
 import socket
 from _thread import *
 import pickle
+
 import pygame
 import re
-
+import tkinter as tk
 
 
 
@@ -24,7 +25,7 @@ print("Waiting for a connection, Server Started")
 
 users=[]
 scores=[0,0,0,0]
-pos = [(1000*0.2,''),(1000*0.3,''),(1000*0.4,''),(1000*0.5,'')]
+pos = [(1000*0.2,'',''),(1000*0.3,'',''),(1000*0.4,'',''),(1000*0.5,'','')]
 carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
 carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
 carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
@@ -80,20 +81,28 @@ def threaded_client(conn, player):
                 continue
 
             print("dataaaaa",data)
-            s = re.split(r'[(,)]', str(data))
-            if(data!="GameOver" and len(s)>1 and len(s)!=3):
+
+            s = re.split(r'[(,),:]', str(data))
+            # s1= re.split(r'[:]', str(data))
+            print(len(s),"kiko bgd")
+
+            if(data!="GameOver" and len(s)>1 and len(s)!=3 and len(s)!=2):
                 pos[player] = data
 
             if not data:
                 print("Disconnected")
                 break
             elif(data!="GameOver"):
+                if (len(s) == 2):
+                    print("kikoooo", data)
+                    pos[player] = (pos[player][0], pos[player][1], data)
+                    print(pos[player], "miroooo")
                 if(len(s)==1):
                     scores[player]=int(data)
                     print("scores=",scores)
                 if (len(s) == 3):
                     users.append(s[1])
-                    pos[player]=(pos[player][0],s[1])
+                    pos[player]=(pos[player][0],s[1],pos[player][2])
                     print("users=", users)
                     print("possss",pos)
                 for i in range(len(ids)):
@@ -134,7 +143,11 @@ def threaded_client(conn, player):
         print("Lost connection")
         conn.close()
 
+
+
 currentPlayer=0
+chat_windows=[]
+
 while True:
 
     conn, addr = s.accept()
@@ -155,3 +168,6 @@ while True:
             print("ids be current player 3ady")
         conn.send(pickle.dumps(indices))
         currentPlayer+=1
+     # Add the chat window to the list
+
+    # Run the tkinter event loop to update the GUI

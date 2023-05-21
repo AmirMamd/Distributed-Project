@@ -7,27 +7,67 @@ import random
 from time import sleep
 import pygame_gui
 import sys
-
+import threading
+import tkinter as tk
+from tkinter import scrolledtext, Entry, Button, END
 class CarRacing:
     def __init__(self):
         pygame.init()
         self.display_width = 1000
         self.display_height = 600
         self.black = (0, 0, 0)
-        # self.ScoreArray=[(0,''),(0,''),(0,''),(0,'')]
         self.white = (255, 255, 255)
         self.clock = pygame.time.Clock()
         self.gameDisplay = None
-        # self.WIDTH, self.HEIGHT = 1000, 600
-        # self.SCREEN = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
-        # self.manager = pygame_gui.UIManager((1000, 600))
-        #
-        # self.text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((150, 275), (600, 50)),
-        #                                                       manager=self.manager,
-        #                                                       object_id='#main_text_entry')
-        # # self.const=310
-        # self.get_user_name(self.clock, self.manager, self.SCREEN, self.WIDTH, self.HEIGHT)
+        self.UserMessage=''
+        self.MouseDown=0
         self.initialize(0)
+
+    def display_chat(self, message):
+        self.chat_text.configure(state='normal')
+        self.chat_text.insert(tk.END, message + "\n")
+        self.chat_text.configure(state='disabled')
+        self.chat_text.yview(tk.END)
+
+    # def display_chat(self, message):
+    #     # self.chat_box.config(state="normal")
+    #     self.chat_box.insert(END, message + "\n")
+    #     self.chat_box.config(state="disabled")
+    #     self.chat_box.see(END)
+    def create_chat_screen(self):
+        self.root = tk.Tk()
+        self.root.title("Chat")
+
+        self.chat_text = tk.Text(self.root, state=tk.DISABLED)
+        self.chat_text.pack()
+
+        self.chat_entry = tk.Entry(self.root)
+        self.chat_entry.pack()
+
+        self.chat_entry.bind("<Return>", self.send_message)
+
+        self.root.protocol("WM_DELETE_WINDOW", self.close_chat_screen)
+
+        for event in pygame.event.get():
+            if event.type ==pygame.MOUSEBUTTONDOWN:
+                self.MouseDown=1
+
+        self.root.mainloop()
+
+    def send_message(self, event):
+        global v,user
+        message = self.chat_entry.get()
+        self.UserMessage=message
+        print("walaaaa")
+        n.send((user+":"+message))
+        self.chat_entry.delete(0, tk.END)
+        self.display_chat(user+":"+message)
+        # Send the message to other players using sockets
+
+    def close_chat_screen(self):
+        # Clean up and close the chat screen
+        self.root.destroy()
+        # Handle any necessary cleanup code
 
     def show_user_name(self,user_name,SCREEN,WIDTH,HEIGHT,clock):
         while True:
@@ -74,14 +114,12 @@ class CarRacing:
 
             manager.draw_ui(SCREEN)
 
-            # pygame.display.update()
             new_text = pygame.font.SysFont("bahnschrift", 50).render(f"Enter username", True, "black")
             new_text_rect = new_text.get_rect(center=(WIDTH / 4, HEIGHT / 4))
             SCREEN.blit(new_text, new_text_rect)
             # clock.tick(60)
             pygame.display.update()
             if(flag==1):
-                # flag=0
                 break
 
 
@@ -105,6 +143,9 @@ class CarRacing:
 
             self.clock = pygame.time.Clock()
             self.get_user_name(self.clock, self.manager, self.SCREEN, self.WIDTH, self.HEIGHT)
+            chat_thread = threading.Thread(target=self.create_chat_screen)
+            chat_thread.start()
+            # chat_thread=self.create_chat_screen()
             p1 = n.getP()
             v=[]
             print("p11111", p1)
@@ -161,14 +202,12 @@ class CarRacing:
 
     def run_car(self):
         global v,user
-        # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
         while not self.crashed:
-            v = n.send((self.car_x_coordinate, user))
-            # n.send((self.car_x_coordinate, self.car_y_coordinate))
+            # for SplittedMessage in range(len(v)):
+            #     self.display_chat(v)
+            v = n.send((self.car_x_coordinate, user,self.UserMessage))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    # print("p1=",p1)
-                    # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
                     n.send(p1)
                     n.send("quit")
                     self.crashed = True
@@ -177,12 +216,12 @@ class CarRacing:
                     print("v=",v)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
-                        v=n.send((self.car_x_coordinate, user))
+                        v=n.send((self.car_x_coordinate, user,self.UserMessage))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
                         self.car_x_coordinate += 50
-                        v = n.send((self.car_x_coordinate, user))
+                        v = n.send((self.car_x_coordinate, user,self.UserMessage))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     print ("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
@@ -212,6 +251,12 @@ class CarRacing:
                     print("x1=",x1)
                     self.id=(v[a+1])
                     self.car(x1, self.car_y_coordinate,self.id,a)
+                    print("s[2]=",s[2],"s[3]=",s[3])
+                    if(self.MouseDown==1):
+                        self.display_chat(s[2]+":"+s[3])
+                        self.MouseDown=0
+
+
 
             self.highscore(self.count)
             self.count += 1
@@ -233,7 +278,6 @@ class CarRacing:
 
             pygame.display.update()
             self.clock.tick(60)
-
 
     def display_message(self, msg):
         font = pygame.font.SysFont("comicsansms", 72, True)
