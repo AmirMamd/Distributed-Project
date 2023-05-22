@@ -1,17 +1,20 @@
 import socket
 from _thread import *
 import pickle
-
 import pygame
 import re
-import tkinter as tk
-
-
 
 LISTENER_LIMIT = 4
 active_clients = []  # List of all currently connected users
 HOST = "127.0.0.1"
-PORT = 3000
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Connect to the target server
+client_socket.connect((HOST, 8000))
+# Send data to the target server
+message = "Hello from Server 1!"
+client_socket.send(message.encode())
+PORT = int(client_socket.recv(4096).decode())
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -25,7 +28,7 @@ print("Waiting for a connection, Server Started")
 
 users=[]
 scores=[0,0,0,0]
-pos = [(1000*0.2,'',''),(1000*0.3,'',''),(1000*0.4,'',''),(1000*0.5,'','')]
+pos = [(1000*0.2,''),(1000*0.3,''),(1000*0.4,''),(1000*0.5,'')]
 carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
 carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
 carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
@@ -67,7 +70,6 @@ def threaded_client(conn, player):
 
                 conn.send(pickle.dumps(reply))
 
-
             if(data=="quit"):
                 print("quitttt")
                 conn.send(pickle.dumps("Quitted"))
@@ -81,37 +83,21 @@ def threaded_client(conn, player):
                 conn.send(pickle.dumps(reply))
                 continue
 
-            if(data=="pop"):
-                for i in range(len(reply)):
-                    pos[i] = list(pos[i])  # Convert tuple to a list
-                    pos[i][2] = ''  # Set the third element (string) to an empty string
-                    pos[i] = tuple(pos[i])
-                    if(i%3==0):
-                        reply[i] = list(reply[i])  # Convert tuple to a list
-                        reply[i][2] = ''  # Set the third element (string) to an empty string
-                        reply[i] = tuple(reply[i])
-                        print("reply=", reply, "pos=",pos,"--------------------------")
             print("dataaaaa",data)
-
-            s = re.split(r'[(,),:]', str(data))
-
-            if(data!="GameOver" and data!="pop" and len(s)>1 and len(s)!=3 and len(s)!=2):
+            s = re.split(r'[(,)]', str(data))
+            if(data!="GameOver" and len(s)>1 and len(s)!=3):
                 pos[player] = data
 
             if not data:
                 print("Disconnected")
                 break
-            elif(data!="GameOver" and data!="pop"):
-                if (len(s) == 2):
-                    print("kikoooo", data)
-                    pos[player] = (pos[player][0], pos[player][1], data)
-                    print(pos[player], "miroooo")
+            elif(data!="GameOver"):
                 if(len(s)==1):
                     scores[player]=int(data)
                     print("scores=",scores)
                 if (len(s) == 3):
                     users.append(s[1])
-                    pos[player]=(pos[player][0],s[1],pos[player][2])
+                    pos[player]=(pos[player][0],s[1])
                     print("users=", users)
                     print("possss",pos)
                 for i in range(len(ids)):
@@ -147,14 +133,12 @@ def threaded_client(conn, player):
             print("da5al fel except")
             break
 
-    if(data!="GameOver" and data!="pop"):
+    if(data!="GameOver"):
         print(currentPlayer,"currentPlayer")
         print("Lost connection")
         conn.close()
 
 currentPlayer=0
-chat_windows=[]
-
 while True:
 
     conn, addr = s.accept()
