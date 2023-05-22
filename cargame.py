@@ -21,13 +21,18 @@ class CarRacing:
         self.gameDisplay = None
         self.UserMessage=''
         self.MouseDown=0
+        self.MessageCounter=0
         self.initialize(0)
 
     def display_chat(self, message):
+        print("self.MouseDown",self.MouseDown)
         self.chat_text.configure(state='normal')
         self.chat_text.insert(tk.END, message + "\n")
         self.chat_text.configure(state='disabled')
         self.chat_text.yview(tk.END)
+        self.MouseDown = 1
+        print("display chat called be ",message)
+
 
     # def display_chat(self, message):
     #     # self.chat_box.config(state="normal")
@@ -48,9 +53,6 @@ class CarRacing:
 
         self.root.protocol("WM_DELETE_WINDOW", self.close_chat_screen)
 
-        for event in pygame.event.get():
-            if event.type ==pygame.MOUSEBUTTONDOWN:
-                self.MouseDown=1
 
         self.root.mainloop()
 
@@ -61,7 +63,22 @@ class CarRacing:
         print("walaaaa")
         n.send((user+":"+message))
         self.chat_entry.delete(0, tk.END)
-        self.display_chat(user+":"+message)
+        if(message!=''):
+            # self.MouseDown=1
+            self.display_chat(user+":"+message)
+
+
+        # for a in range(len(v)):
+        #     if (a % 3 == 0):
+        #         print("a=", a)
+        #         s = re.split(r'[(,)]', str(v[a]))
+        #         print("V[x]=", v[a])
+        #         print("v[1]", v[1])
+        #         x1 = float(s[1])
+        #         print("x1=", x1)
+        #         print("s[2]=", s[2], "s[3]=", s[3])
+        #         print("sosoooo", s[2] + ":" + s[3])
+        #         self.display_chat(str(s[2]) + ":" + s[3])
         # Send the message to other players using sockets
 
     def close_chat_screen(self):
@@ -203,25 +220,45 @@ class CarRacing:
     def run_car(self):
         global v,user
         while not self.crashed:
+
+
             # for SplittedMessage in range(len(v)):
             #     self.display_chat(v)
-            v = n.send((self.car_x_coordinate, user,self.UserMessage))
+            if(self.MouseDown==1):
+                v = n.send((self.car_x_coordinate, user,user+":"+self.UserMessage))
+            else:
+                v = n.send((self.car_x_coordinate, user, ''))
+            # messages = n.recv()
+            # for message in messages:
+            #     self.display_chat(message)
+
             for event in pygame.event.get():
+                # if event.type == pygame.MOUSEBUTTONDOWN:
+                # if event.type == pygame.ACTIVEEVENT:
+                #     if event.gain == 0:  # Window lost focus
+                #         self.MouseDown=1
                 if event.type == pygame.QUIT:
                     n.send(p1)
                     n.send("quit")
                     self.crashed = True
 
                 if (event.type == pygame.KEYDOWN):
+                    # self.MouseDown=1
                     print("v=",v)
                     if (event.key == pygame.K_LEFT):
                         self.car_x_coordinate -= 50
-                        v=n.send((self.car_x_coordinate, user,self.UserMessage))
+                        if (self.MouseDown == 1):
+                            v = n.send((self.car_x_coordinate, user, user+":"+self.UserMessage))
+                        else:
+                            v = n.send((self.car_x_coordinate, user, ''))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if (event.key == pygame.K_RIGHT):
                         self.car_x_coordinate += 50
-                        v = n.send((self.car_x_coordinate, user,self.UserMessage))
+                        if (self.MouseDown == 1):
+                            v = n.send((self.car_x_coordinate, user, user+":"+self.UserMessage))
+                        else:
+                            v = n.send((self.car_x_coordinate, user, ''))
                         print("aloooo vvvvv",v)
                         print ("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     print ("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
@@ -252,10 +289,17 @@ class CarRacing:
                     self.id=(v[a+1])
                     self.car(x1, self.car_y_coordinate,self.id,a)
                     print("s[2]=",s[2],"s[3]=",s[3])
-                    if(self.MouseDown==1):
-                        self.display_chat(s[2]+":"+s[3])
-                        self.MouseDown=0
-
+                    if(self.MouseDown==1 and v[a][2]!=''):
+                        if(a==(len(v)-3)):
+                            self.MessageCounter += 1
+                        print("sosoooo",s[3])
+                        self.display_chat(s[3])
+            print("MessageCounter",self.MessageCounter)
+            if(self.MessageCounter==(len(v)/3)):
+                self.MouseDown = 0
+                self.MessageCounter=0
+                print("han pop now")
+                n.send("pop")
 
 
             self.highscore(self.count)

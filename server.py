@@ -67,6 +67,7 @@ def threaded_client(conn, player):
 
                 conn.send(pickle.dumps(reply))
 
+
             if(data=="quit"):
                 print("quitttt")
                 conn.send(pickle.dumps("Quitted"))
@@ -80,19 +81,27 @@ def threaded_client(conn, player):
                 conn.send(pickle.dumps(reply))
                 continue
 
+            if(data=="pop"):
+                for i in range(len(reply)):
+                    pos[i] = list(pos[i])  # Convert tuple to a list
+                    pos[i][2] = ''  # Set the third element (string) to an empty string
+                    pos[i] = tuple(pos[i])
+                    if(i%3==0):
+                        reply[i] = list(reply[i])  # Convert tuple to a list
+                        reply[i][2] = ''  # Set the third element (string) to an empty string
+                        reply[i] = tuple(reply[i])
+                        print("reply=", reply, "pos=",pos,"--------------------------")
             print("dataaaaa",data)
 
             s = re.split(r'[(,),:]', str(data))
-            # s1= re.split(r'[:]', str(data))
-            print(len(s),"kiko bgd")
 
-            if(data!="GameOver" and len(s)>1 and len(s)!=3 and len(s)!=2):
+            if(data!="GameOver" and data!="pop" and len(s)>1 and len(s)!=3 and len(s)!=2):
                 pos[player] = data
 
             if not data:
                 print("Disconnected")
                 break
-            elif(data!="GameOver"):
+            elif(data!="GameOver" and data!="pop"):
                 if (len(s) == 2):
                     print("kikoooo", data)
                     pos[player] = (pos[player][0], pos[player][1], data)
@@ -138,12 +147,10 @@ def threaded_client(conn, player):
             print("da5al fel except")
             break
 
-    if(data!="GameOver"):
+    if(data!="GameOver" and data!="pop"):
         print(currentPlayer,"currentPlayer")
         print("Lost connection")
         conn.close()
-
-
 
 currentPlayer=0
 chat_windows=[]
@@ -168,6 +175,3 @@ while True:
             print("ids be current player 3ady")
         conn.send(pickle.dumps(indices))
         currentPlayer+=1
-     # Add the chat window to the list
-
-    # Run the tkinter event loop to update the GUI
