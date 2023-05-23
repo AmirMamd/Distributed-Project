@@ -75,11 +75,13 @@ def threaded_client(conn, currentplayer):
             else:
                 clients.remove(conn)
                 conn.close()
+                # currentplayer-=1
                 broadcast_message(f"{username} has left the {chat_room}")
                 break
         except ConnectionResetError:
             clients.remove(conn)
             conn.close()
+            # currentplayer-=1
             broadcast_message(f"{username} has left the {chat_room}")
             break
 
@@ -100,9 +102,9 @@ while True:
     # Receive data from the client
     # data = client_socket.recv(4096).decode()
     # print("dataaaa", data)
-    if currentPlayer < 4:
-        threading.Thread(target=threaded_client, args=(conn, currentPlayer)).start()
-        currentPlayer += 1
+    # if currentPlayer < 4:
+    threading.Thread(target=threaded_client, args=(conn, currentPlayer)).start()
+        # currentPlayer += 1
     # client_socket.send("3000".encode())
     # if data == "Hello from Server 1!":
     #     print("[Received from Client Server]:", data)

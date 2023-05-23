@@ -67,19 +67,6 @@ class CarRacing:
                         event.ui_object_id == '#main_text_entry'):
                     user=event.text
 
-
-
-                    # Call the Username function
-
-                    # self.rootStart()
-                    # self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    # self.client_socket.connect(("127.0.0.1", 9999))
-                    # self.client_socket.sendall(("username"+":"+user).encode("utf-8"))
-                    # self.client_socket.sendall(user.encode("utf-8"))
-                    # self.client_socket.close()
-                    # root = tk.Tk()
-                    # client_gui = ChatClientGUI(root,user)
-
                     self.show_user_name(event.text,SCREEN,WIDTH,HEIGHT,clock)
                     flag=1
                     break
@@ -99,7 +86,6 @@ class CarRacing:
             # clock.tick(60)
             pygame.display.update()
             if(flag==1):
-                # flag=0
                 break
 
 
@@ -171,10 +157,10 @@ class CarRacing:
 
         # self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render(user), True, self.white), (0,countt))
 
-    def racing_window(self):
-
+    def racing_window(self,k):
         # Create a new thread for running the Tkinter GUI
-        gui_thread = threading.Thread(target=self.rootStart).start()
+        if(k==0):
+            gui_thread = threading.Thread(target=self.rootStart).start()
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption('Car Dodge')
         self.run_car()
@@ -187,7 +173,7 @@ class CarRacing:
         root.mainloop()
 
     def run_car(self):
-        global v,user
+        global v,user,gui_thread
         # self.root.mainloop()
         # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
         while not self.crashed:
@@ -203,6 +189,12 @@ class CarRacing:
                     n.send(p1)
                     n.send("quit")
                     self.crashed = True
+                    # event_quit.set()
+                    #
+                    # sys.exit()
+
+
+
 
                 if (event.type == pygame.KEYDOWN):
                     print("v=",v)
@@ -275,7 +267,7 @@ class CarRacing:
         self.clock.tick(60)
         sleep(1)
         car_racing.initialize(1)
-        car_racing.racing_window()
+        car_racing.racing_window(1)
 
     def back_ground_raod(self):
         self.gameDisplay.blit(self.bgImg, (self.bg_x1, self.bg_y1))
@@ -329,5 +321,5 @@ class CarRacing:
 
 if __name__ == '__main__':
     car_racing = CarRacing()
-    gameThread= threading.Thread(target=car_racing.racing_window()).start()
+    gameThread= threading.Thread(target=car_racing.racing_window(0)).start()
     # car_racing.racing_window()

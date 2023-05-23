@@ -2,8 +2,7 @@ import socket
 import threading
 import tkinter as tk
 from tkinter import scrolledtext, Entry, Button, END
-from chat_network import chat_network
-import pickle
+
 
 class ChatClientGUI:
     def __init__(self, root):
@@ -18,23 +17,18 @@ class ChatClientGUI:
 
         self.message_entry = Entry(self.root)
         self.message_entry.pack()
-
-        self.send_button = Button(self.root, text="Send", command=self.send_message)
-        self.send_button.pack()
+        self.message_entry.bind("<Return>", self.send_message)
 
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((self.server_address, 9999))
-        # self.username=username
         threading.Thread(target=self.receive_messages).start()
-    #     self.receive_username()
-    #
-    #
-    # def receive_username(self):
-    #     # username = self.client_socket.recv(4096).decode()
-    #     self.display_message(f"Welcome : {username}")
-    def Username(self,username):
+
+        self.root.protocol("WM_DELETE_WINDOW", self.handle_quit)
+
+    def Username(self, username):
         self.client_socket.sendall(username.encode("utf-8"))
-    def send_message(self):
+
+    def send_message(self, event=None):
         message = self.message_entry.get()
         self.client_socket.sendall(message.encode("utf-8"))
         self.message_entry.delete(0, END)
@@ -54,8 +48,14 @@ class ChatClientGUI:
         self.chat_box.config(state="disabled")
         self.chat_box.see(END)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    # username="amir"
-    client_gui = ChatClientGUI(root)
-    root.mainloop()
+    def close_connection(self):
+        self.client_socket.close()
+
+    def handle_quit(self):
+        self.close_connection()
+        self.root.quit()
+#
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     client_gui = ChatClientGUI(root)
+#     root.mainloop()
