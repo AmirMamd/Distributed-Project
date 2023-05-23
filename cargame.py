@@ -2,7 +2,7 @@ import time
 
 import pygame
 import re
-
+import threading
 import chat
 from network import Network
 import random
@@ -17,9 +17,7 @@ class CarRacing:
         self.display_width = 1000
         self.display_height = 600
         self.black = (0, 0, 0)
-        self.root = tk.Tk()
         # Create an instance of ChatClientGUI
-        self.client_gui = ChatClientGUI(self.root)
         # self.ScoreArray=[(0,''),(0,''),(0,''),(0,'')]
         self.white = (255, 255, 255)
         self.clock = pygame.time.Clock()
@@ -72,8 +70,8 @@ class CarRacing:
 
 
                     # Call the Username function
-                    self.client_gui.Username(user)
 
+                    # self.rootStart()
                     # self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     # self.client_socket.connect(("127.0.0.1", 9999))
                     # self.client_socket.sendall(("username"+":"+user).encode("utf-8"))
@@ -81,7 +79,7 @@ class CarRacing:
                     # self.client_socket.close()
                     # root = tk.Tk()
                     # client_gui = ChatClientGUI(root,user)
-                    self.root.mainloop()
+
                     self.show_user_name(event.text,SCREEN,WIDTH,HEIGHT,clock)
                     flag=1
                     break
@@ -174,9 +172,19 @@ class CarRacing:
         # self.gameDisplay.blit(pygame.font.SysFont("arial", 20).render(user), True, self.white), (0,countt))
 
     def racing_window(self):
+
+        # Create a new thread for running the Tkinter GUI
+        gui_thread = threading.Thread(target=self.rootStart).start()
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption('Car Dodge')
         self.run_car()
+
+    def rootStart(self):
+        root = tk.Tk()
+        global user
+        client_gui = ChatClientGUI(root)
+        client_gui.Username(user)
+        root.mainloop()
 
     def run_car(self):
         global v,user
@@ -321,4 +329,5 @@ class CarRacing:
 
 if __name__ == '__main__':
     car_racing = CarRacing()
-    car_racing.racing_window()
+    gameThread= threading.Thread(target=car_racing.racing_window()).start()
+    # car_racing.racing_window()
