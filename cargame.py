@@ -2,18 +2,24 @@ import time
 
 import pygame
 import re
+
+import chat
 from network import Network
 import random
 from time import sleep
 import pygame_gui
 import sys
-
+from chat import ChatClientGUI
+import tkinter as tk
 class CarRacing:
     def __init__(self):
         pygame.init()
         self.display_width = 1000
         self.display_height = 600
         self.black = (0, 0, 0)
+        self.root = tk.Tk()
+        # Create an instance of ChatClientGUI
+        self.client_gui = ChatClientGUI(self.root)
         # self.ScoreArray=[(0,''),(0,''),(0,''),(0,'')]
         self.white = (255, 255, 255)
         self.clock = pygame.time.Clock()
@@ -62,6 +68,20 @@ class CarRacing:
                 if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
                         event.ui_object_id == '#main_text_entry'):
                     user=event.text
+
+
+
+                    # Call the Username function
+                    self.client_gui.Username(user)
+
+                    # self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # self.client_socket.connect(("127.0.0.1", 9999))
+                    # self.client_socket.sendall(("username"+":"+user).encode("utf-8"))
+                    # self.client_socket.sendall(user.encode("utf-8"))
+                    # self.client_socket.close()
+                    # root = tk.Tk()
+                    # client_gui = ChatClientGUI(root,user)
+                    self.root.mainloop()
                     self.show_user_name(event.text,SCREEN,WIDTH,HEIGHT,clock)
                     flag=1
                     break
@@ -160,8 +180,12 @@ class CarRacing:
 
     def run_car(self):
         global v,user
+        # self.root.mainloop()
         # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
         while not self.crashed:
+            # root = tk.Tk()
+            # client_gui = ChatClientGUI(root, user)
+            # root.mainloop()
             v = n.send((self.car_x_coordinate, user))
             # n.send((self.car_x_coordinate, self.car_y_coordinate))
             for event in pygame.event.get():

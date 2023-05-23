@@ -26,6 +26,6 @@ while True:
         client_socket.send("3000".encode())
     elif data == "Hello from Server 2!":
         print("[Received from Chat Server]:", data)
-        client_socket.send("9999".encode())
+    client_socket.send("9999".encode())
     # Close the client connection
     client_socket.close()

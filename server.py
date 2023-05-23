@@ -10,12 +10,12 @@ HOST = "127.0.0.1"
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Connect to the target server
-client_socket.connect((HOST, 8000))
-# Send data to the target server
-message = "Hello from Server 1!"
-client_socket.send(message.encode())
-PORT = int(client_socket.recv(4096).decode())
-
+# client_socket.connect((HOST, 8000))
+# # Send data to the target server
+# message = "Hello from Server 1!"
+# client_socket.send(message.encode())
+# PORT = int(client_socket.recv(4096).decode())
+PORT=3000
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -96,6 +96,7 @@ def threaded_client(conn, player):
                     scores[player]=int(data)
                     print("scores=",scores)
                 if (len(s) == 3):
+                    # client_socket.send(s[1].encode())
                     users.append(s[1])
                     pos[player]=(pos[player][0],s[1])
                     print("users=", users)
