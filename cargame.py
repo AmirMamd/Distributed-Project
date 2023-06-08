@@ -11,6 +11,7 @@ import pygame_gui
 import sys
 from chat import ChatClientGUI
 import tkinter as tk
+# from database_test import Database
 class CarRacing:
     def __init__(self):
         pygame.init()
@@ -292,6 +293,14 @@ class CarRacing:
         print("v gowa highscore=",v)
         font = pygame.font.SysFont("arial", 20)
         ScoreArray[0] = (int(count), str(user))
+        # if (int(count) % 100 == 0 and count!=0):
+        if (int(count) % 100 == 0):
+            n.send("update db")
+        # if (int(count) % 100 == 0):
+        #     db = threading.Thread(target=Database, args=((self.car_x_coordinate, user, p1, int(count)), v))
+        #     db.daemon = True
+        #     db.start()
+        #     del db
         # text = font.render("Score of player "+ user +": " + str(count), True, self.white)
         # self.gameDisplay.blit(text, (0, 0))
         p=0
