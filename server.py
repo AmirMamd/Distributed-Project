@@ -1,21 +1,19 @@
 import socket
+import time
 from _thread import *
 import pickle
 import pygame
 import re
-
+import concurrent.futures
+from pymongo import MongoClient
+from database_test import Database
+import threading
 LISTENER_LIMIT = 4
 active_clients = []  # List of all currently connected users
 HOST = "127.0.0.1"
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Connect to the target server
-# client_socket.connect((HOST, 8000))
-# # Send data to the target server
-# message = "Hello from Server 1!"
-# client_socket.send(message.encode())
-# PORT = int(client_socket.recv(4096).decode())
-PORT=3000
+PORT=5555
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -25,6 +23,8 @@ except socket.error as e:
 
 s.listen(LISTENER_LIMIT)
 print("Waiting for a connection, Server Started")
+
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
 
 users=[]
 scores=[0,0,0,0]
@@ -38,6 +38,28 @@ ids=[]
 indices=[]
 flagx=-1
 counter=0
+
+# def Database(id,username,score, position):
+#
+#     print(id,"id from database")
+#     print(username,"username from databaseeeee")
+#     print(score, "score from databaseeeee")
+#     print(position, "position from databaseeeee")
+#     cluster = MongoClient("mongodb://amirrmamdouh:123@ac-l1zkv5z-shard-00-00.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-01.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-02.g8t8zzf.mongodb.net:27017/?ssl=true&replicaSet=atlas-xsrnrq-shard-0&authSource=admin&retryWrites=true&w=majority")
+#     db = cluster['Clients']
+#     collection=db["Records"]
+#
+#     p1={"_id":id,"name":username,"score":score,"position":position}
+#
+#     collection.update_one(
+#         {"_id": id},
+#         {"$set": p1},
+#         upsert=True
+#     )
+#     return 0
+
+
+
 
 def threaded_client(conn, player):
     global currentPlayer,flagx,counter,pos
@@ -85,17 +107,17 @@ def threaded_client(conn, player):
 
             print("dataaaaa",data)
             s = re.split(r'[(,)]', str(data))
-            if(data!="GameOver" and len(s)>1 and len(s)!=3):
+            if(data!="GameOver" and len(s)>1 and len(s)!=3  and data!="update db"):
                 pos[player] = data
 
             if not data:
                 print("Disconnected")
                 break
             elif(data!="GameOver"):
-                if(len(s)==1):
+                if(len(s)==1  and data!="update db"):
                     scores[player]=int(data)
                     print("scores=",scores)
-                if (len(s) == 3):
+                if (len(s) == 3  and data!="update db"):
                     # client_socket.send(s[1].encode())
                     users.append(s[1])
                     pos[player]=(pos[player][0],s[1])
@@ -120,6 +142,24 @@ def threaded_client(conn, player):
                             reply.append(i)
                             reply.append(scores[i])
                             print("replyyyy b flag 1", reply)
+                    # if(data == "update db"):
+                    #     print("ray7en ne update aho")
+                    #     # time.sleep(1)
+                    #     # Database(ids[i], users[i], scores[i], pos[i][0])
+                    #     db = threading.Thread(target=Database, args=((ids[i], users[i], scores[i], pos[i][0])))
+                    #     db.start()
+                    #     # del db
+                    #     # conn.send(pickle.dumps(reply))
+                    #     del db
+                    if (data == "update db"):
+                        print("ray7en ne update aho")
+                        # time.sleep(1)
+                        # Database(ids[i], users[i], scores[i], pos[i][0])
+                        db = threading.Thread(target=Database, args=((ids[player], users[player], scores[player], pos[player][0])))
+                        db.start()
+                        # del db
+                        # conn.send(pickle.dumps(reply))
+                        del db
                     flag=0
                     flag1=0
 
@@ -130,6 +170,8 @@ def threaded_client(conn, player):
             # if(data!="quit"):
             conn.sendall(pickle.dumps(reply))
             print("mirnaaaaaaaa")
+
+
         except:
             print("da5al fel except")
             break
