@@ -6,7 +6,7 @@ import pygame
 import re
 import concurrent.futures
 from pymongo import MongoClient
-from database_test import Database
+from database_test import DB
 import threading
 LISTENER_LIMIT = 4
 active_clients = []  # List of all currently connected users
@@ -24,7 +24,7 @@ except socket.error as e:
 s.listen(LISTENER_LIMIT)
 print("Waiting for a connection, Server Started")
 
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
+# executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
 
 users=[]
 scores=[0,0,0,0]
@@ -39,7 +39,8 @@ indices=[]
 flagx=-1
 counter=0
 
-# def Database(id,username,score, position):
+def Database(id,username,score, position,delflag):
+    db=DB(id=id,username=username,score=score,position=position,delflag=delflag)
 #
 #     print(id,"id from database")
 #     print(username,"username from databaseeeee")
@@ -103,6 +104,16 @@ def threaded_client(conn, player):
                 indices.append(ids.index(int(data)))
                 flagx=int(data)
                 conn.send(pickle.dumps(reply))
+                print("----------------------------------------------")
+                # print(ids)
+                # print(users)
+                # print(scores)
+                # print(ids[player], users[player], scores[player], pos[player][0], 0)
+                db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1))
+                print("player deleted =", pos[player][1])
+                db.start()
+                del db
+                # users.pop(int(data))
                 continue
 
             print("dataaaaa",data)
@@ -155,7 +166,14 @@ def threaded_client(conn, player):
                         print("ray7en ne update aho")
                         # time.sleep(1)
                         # Database(ids[i], users[i], scores[i], pos[i][0])
-                        db = threading.Thread(target=Database, args=((ids[player], users[player], scores[player], pos[player][0])))
+                        print("----------------------------------------------")
+                        # print(ids)
+                        # print(users)
+                        # print(scores)
+                        # print("player=",player)
+                        # print(ids[player], users[player], scores[player], pos[player][0],0)
+                        db = threading.Thread(target=DB, args=(ids[player],  pos[player][1], scores[player], pos[player][0],0))
+                        # print("player=", pos[player][1])
                         db.start()
                         # del db
                         # conn.send(pickle.dumps(reply))
