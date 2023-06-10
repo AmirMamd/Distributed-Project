@@ -39,9 +39,11 @@ indices=[]
 flagx=-1
 counter=0
 
-def Database(id,username,score, position,delflag):
-    db=DB(id=id,username=username,score=score,position=position,delflag=delflag)
+# def Database(id,username,score, position,delflag):
+#     # print("count threads", threading.active_count())
+#     db=DB(id=id,username=username,score=score,position=position,delflag=delflag)
 #
+# #
 #     print(id,"id from database")
 #     print(username,"username from databaseeeee")
 #     print(score, "score from databaseeeee")
@@ -111,6 +113,7 @@ def threaded_client(conn, player):
                 # print(ids[player], users[player], scores[player], pos[player][0], 0)
                 db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1))
                 print("player deleted =", pos[player][1])
+                print("count threads", threading.active_count())
                 db.start()
                 del db
                 # users.pop(int(data))
@@ -174,6 +177,7 @@ def threaded_client(conn, player):
                         # print(ids[player], users[player], scores[player], pos[player][0],0)
                         db = threading.Thread(target=DB, args=(ids[player],  pos[player][1], scores[player], pos[player][0],0))
                         # print("player=", pos[player][1])
+                        print("count threads", threading.active_count())
                         db.start()
                         # del db
                         # conn.send(pickle.dumps(reply))

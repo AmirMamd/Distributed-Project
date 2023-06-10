@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+
 from bson.objectid import ObjectId
 #
 # def DB(id,username,score, position,delFlag):
@@ -121,6 +122,10 @@ def delete_user(collection, username):
     collection.delete_many({"name": username})
     print(id, "User information deleted from the database.")
 
+def delete_user1(collection, username):
+    collection.delete_many({"name": username})
+    print(id, "User information deleted from the database.")
+
 def update_user(collection, id, username, score, position):
     p1 = {"_id": id, "name": username, "score": score, "position": position}
     collection.update_one(
@@ -129,7 +134,15 @@ def update_user(collection, id, username, score, position):
         upsert=True
     )
 
+def update_user1(collection, id, username, score, position):
+    p1 = {"_id": id, "name": username, "score": score, "position": position}
+    collection.update_one(
+        {"_id": id},
+        {"$set": p1},
+        upsert=True
+    )
 def DB(id, username, score, position, delFlag):
+
     collection1 = MongoClient(
         "mongodb://amirrmamdouh:123@ac-l1zkv5z-shard-00-00.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-01.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-02.g8t8zzf.mongodb.net:27017/?ssl=true&replicaSet=atlas-xsrnrq-shard-0&authSource=admin&retryWrites=true&w=majority")
     collection2 = MongoClient(
@@ -146,9 +159,9 @@ def DB(id, username, score, position, delFlag):
     if delFlag == 1:
 
         delete_user(collection1, username)
-        delete_user(collection2, username)
+        delete_user1(collection2, username)
 
     else:
         update_user(collection1, id, username, score, position)
-        update_user(collection2, id, username, score, position)
+        update_user1(collection2, id, username, score, position)
 
