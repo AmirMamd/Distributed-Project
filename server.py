@@ -24,8 +24,12 @@ except socket.error as e:
 s.listen(LISTENER_LIMIT)
 print("Waiting for a connection, Server Started")
 
-# executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
-
+executor0 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+executor1 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+executor2 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+executor3 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+executors=[executor0,executor1,executor2,executor3]
+ExFlag=False
 users=[]
 scores=[0,0,0,0]
 pos = [(1000*0.2,''),(1000*0.3,''),(1000*0.4,''),(1000*0.5,'')]
@@ -39,33 +43,10 @@ indices=[]
 flagx=-1
 counter=0
 
-# def Database(id,username,score, position,delflag):
-#     # print("count threads", threading.active_count())
-#     db=DB(id=id,username=username,score=score,position=position,delflag=delflag)
-#
-# #
-#     print(id,"id from database")
-#     print(username,"username from databaseeeee")
-#     print(score, "score from databaseeeee")
-#     print(position, "position from databaseeeee")
-#     cluster = MongoClient("mongodb://amirrmamdouh:123@ac-l1zkv5z-shard-00-00.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-01.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-02.g8t8zzf.mongodb.net:27017/?ssl=true&replicaSet=atlas-xsrnrq-shard-0&authSource=admin&retryWrites=true&w=majority")
-#     db = cluster['Clients']
-#     collection=db["Records"]
-#
-#     p1={"_id":id,"name":username,"score":score,"position":position}
-#
-#     collection.update_one(
-#         {"_id": id},
-#         {"$set": p1},
-#         upsert=True
-#     )
-#     return 0
-
-
-
 
 def threaded_client(conn, player):
     global currentPlayer,flagx,counter,pos
+
     print("id of current player =",player)  #player holds the id of the current player
     print("CurrentPlayer",currentPlayer)
     # conn.send(pickle.dumps(str(pos[player])))
@@ -74,6 +55,7 @@ def threaded_client(conn, player):
     flag1=0
     while True:
         try:
+
             # data = pickle.decode_long(conn.recv(2048))
             data = pickle.loads(conn.recv(2048))
             print("dataaaaaa",data)
@@ -111,11 +93,13 @@ def threaded_client(conn, player):
                 # print(users)
                 # print(scores)
                 # print(ids[player], users[player], scores[player], pos[player][0], 0)
+                # dead=False
                 db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1))
                 print("player deleted =", pos[player][1])
                 print("count threads", threading.active_count())
                 db.start()
-                del db
+
+                # del db
                 # users.pop(int(data))
                 continue
 
@@ -175,13 +159,25 @@ def threaded_client(conn, player):
                         # print(scores)
                         # print("player=",player)
                         # print(ids[player], users[player], scores[player], pos[player][0],0)
-                        db = threading.Thread(target=DB, args=(ids[player],  pos[player][1], scores[player], pos[player][0],0))
+                        # dead=False
+                        # db = threading.Thread(target=DB, args=(ids[player],  pos[player][1], scores[player], pos[player][0],0)).start()
+                        executors[int(ids[player])].submit(DB,ids[player],  pos[player][1], scores[player], pos[player][0],0)
                         # print("player=", pos[player][1])
                         print("count threads", threading.active_count())
-                        db.start()
+                        if(threading.active_count()>150):
+                            # print(threading.current_thread())
+                            print("walaaaa")
+                            # ExFlag = True
+                            # for exe in range(len(executors)):
+                            executors[int(ids[player])].shutdown()
+                            executors[int(ids[player])] = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+                        # if(ExFlag):
+                        #     executor = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+
+                        # db.start()
                         # del db
                         # conn.send(pickle.dumps(reply))
-                        del db
+                        # del db
                     flag=0
                     flag1=0
 

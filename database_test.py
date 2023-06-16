@@ -117,15 +117,17 @@ from bson.objectid import ObjectId
 
 
 
-
+def get_user(collection, username):
+    user = collection.find_one({"name": username})
+    return user
 def delete_user(collection, username):
     collection.delete_many({"name": username})
-    print(id, "User information deleted from the database.")
-
+    print(username, " User information deleted from the database.")
+    return True
 def delete_user1(collection, username):
     collection.delete_many({"name": username})
-    print(id, "User information deleted from the database.")
-
+    print(username, " User information deleted from the database.")
+    return True
 def update_user(collection, id, username, score, position):
     p1 = {"_id": id, "name": username, "score": score, "position": position}
     collection.update_one(
@@ -133,7 +135,7 @@ def update_user(collection, id, username, score, position):
         {"$set": p1},
         upsert=True
     )
-
+    return True
 def update_user1(collection, id, username, score, position):
     p1 = {"_id": id, "name": username, "score": score, "position": position}
     collection.update_one(
@@ -141,6 +143,7 @@ def update_user1(collection, id, username, score, position):
         {"$set": p1},
         upsert=True
     )
+    return True
 def DB(id, username, score, position, delFlag):
 
     collection1 = MongoClient(
@@ -157,11 +160,21 @@ def DB(id, username, score, position, delFlag):
     collection2 = db1['Records']
 
     if delFlag == 1:
-
-        delete_user(collection1, username)
-        delete_user1(collection2, username)
+        try:
+            delete_user(collection1, username)
+        except:
+            print("dbDelete0 failed")
+        try:
+            delete_user1(collection2, username)
+        except:
+            print("dbDelete1 failed")
 
     else:
-        update_user(collection1, id, username, score, position)
-        update_user1(collection2, id, username, score, position)
-
+        try:
+            update_user(collection1, id, username, score, position)
+        except:
+            print("db update0 failed")
+        try:
+            update_user1(collection2, id, username, score, position)
+        except:
+            print("db update1 failed")
