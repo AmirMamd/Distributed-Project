@@ -113,11 +113,6 @@ from bson.objectid import ObjectId
 
 
 
-
-
-
-
-
 def delete_user(collection, username,id):
 
     if(id!=-1):
@@ -133,6 +128,19 @@ def delete_user1(collection, username,id):
         collection.delete_many({"name": username})
     print(username, " User information deleted from the database1.")
 
+
+def get_user(collection, username):
+    user = collection.find_one({"name": username})
+    return user
+def delete_user(collection, username):
+    collection.delete_many({"name": username})
+    print(username, " User information deleted from the database.")
+    return True
+def delete_user1(collection, username):
+    collection.delete_many({"name": username})
+    print(username, " User information deleted from the database.")
+    return True
+
 def update_user(collection, id, username, score, position):
     p1 = {"_id": id, "name": username, "score": score, "position": position}
     collection.update_one(
@@ -140,7 +148,10 @@ def update_user(collection, id, username, score, position):
         {"$set": p1},
         upsert=True
     )
+
     print(username, " User information updated from the database.")
+
+    return True
 
 def update_user1(collection, id, username, score, position):
     p1 = {"_id": id, "name": username, "score": score, "position": position}
@@ -149,12 +160,18 @@ def update_user1(collection, id, username, score, position):
         {"$set": p1},
         upsert=True
     )
+
     print(username, " User information deleted from the database1.")
 def DB(id, username, score, position, delFlag, quitted):
     connection_options = {
         'serverSelectionTimeoutMS': 600000,  # Timeout set to 60 seconds
         # Add other connection options if needed
     }
+
+    return True
+def DB(id, username, score, position, delFlag):
+
+
     collection1 = MongoClient(
         "mongodb://amirrmamdouh:123@ac-l1zkv5z-shard-00-00.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-01.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-02.g8t8zzf.mongodb.net:27017/?ssl=true&replicaSet=atlas-xsrnrq-shard-0&authSource=admin&retryWrites=true&w=majority", **connection_options)
     collection2 = MongoClient(
@@ -170,6 +187,7 @@ def DB(id, username, score, position, delFlag, quitted):
 
     if delFlag == 1:
 
+
         delete_user(collection1, username,-1)
         delete_user1(collection2, username,-1)
 
@@ -181,4 +199,22 @@ def DB(id, username, score, position, delFlag, quitted):
             delete_user(collection1,None ,quitted[i])
             delete_user1(collection2,None ,quitted[i])
 
+        try:
+            delete_user(collection1, username)
+        except:
+            print("dbDelete0 failed")
+        try:
+            delete_user1(collection2, username)
+        except:
+            print("dbDelete1 failed")
+
+    else:
+        try:
+            update_user(collection1, id, username, score, position)
+        except:
+            print("db update0 failed")
+        try:
+            update_user1(collection2, id, username, score, position)
+        except:
+            print("db update1 failed")
 
