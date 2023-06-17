@@ -97,7 +97,7 @@ def threaded_client(conn, player):
 
                 db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1,None))
 
-                db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1))
+                # db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1))
 
                 print("player deleted =", pos[player][1])
                 print("count threads", threading.active_count())
@@ -178,16 +178,16 @@ def threaded_client(conn, player):
                         #     executors[int(ids[player])] = concurrent.futures.ThreadPoolExecutor(max_workers=100)
                         # # if(ExFlag):
 
-                        executors[int(ids[player])].submit(DB,ids[player],  pos[player][1], scores[player], pos[player][0],0)
+                        # executors[int(ids[player])].submit(DB,ids[player],  pos[player][1], scores[player], pos[player][0],0)
                         # print("player=", pos[player][1])
-                        print("count threads", threading.active_count())
-                        if(threading.active_count()>150):
-                            # print(threading.current_thread())
-                            print("walaaaa")
-                            # ExFlag = True
-                            # for exe in range(len(executors)):
-                            executors[int(ids[player])].shutdown()
-                            executors[int(ids[player])] = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+                        # print("count threads", threading.active_count())
+                        # if(threading.active_count()>150):
+                        #     # print(threading.current_thread())
+                        #     print("walaaaa")
+                        #     # ExFlag = True
+                        #     # for exe in range(len(executors)):
+                        #     executors[int(ids[player])].shutdown()
+                        #     executors[int(ids[player])] = concurrent.futures.ThreadPoolExecutor(max_workers=100)
                         # if(ExFlag):
 
                         #     executor = concurrent.futures.ThreadPoolExecutor(max_workers=100)

@@ -132,14 +132,7 @@ def delete_user1(collection, username,id):
 def get_user(collection, username):
     user = collection.find_one({"name": username})
     return user
-def delete_user(collection, username):
-    collection.delete_many({"name": username})
-    print(username, " User information deleted from the database.")
-    return True
-def delete_user1(collection, username):
-    collection.delete_many({"name": username})
-    print(username, " User information deleted from the database.")
-    return True
+
 
 def update_user(collection, id, username, score, position):
     p1 = {"_id": id, "name": username, "score": score, "position": position}
@@ -151,7 +144,6 @@ def update_user(collection, id, username, score, position):
 
     print(username, " User information updated from the database.")
 
-    return True
 
 def update_user1(collection, id, username, score, position):
     p1 = {"_id": id, "name": username, "score": score, "position": position}
@@ -162,20 +154,20 @@ def update_user1(collection, id, username, score, position):
     )
 
     print(username, " User information deleted from the database1.")
-def DB(id, username, score, position, delFlag, quitted):
-    connection_options = {
-        'serverSelectionTimeoutMS': 600000,  # Timeout set to 60 seconds
-        # Add other connection options if needed
-    }
-
-    return True
-def DB(id, username, score, position, delFlag):
+# def DB(id, username, score, position, delFlag, quitted):
+#     connection_options = {
+#         'serverSelectionTimeoutMS': 600000,  # Timeout set to 60 seconds
+#         # Add other connection options if needed
+#     }
+#
+#     return True
+def DB(id, username, score, position, delFlag,quitted):
 
 
     collection1 = MongoClient(
-        "mongodb://amirrmamdouh:123@ac-l1zkv5z-shard-00-00.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-01.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-02.g8t8zzf.mongodb.net:27017/?ssl=true&replicaSet=atlas-xsrnrq-shard-0&authSource=admin&retryWrites=true&w=majority", **connection_options)
+        "mongodb://amirrmamdouh:123@ac-l1zkv5z-shard-00-00.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-01.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-02.g8t8zzf.mongodb.net:27017/?ssl=true&replicaSet=atlas-xsrnrq-shard-0&authSource=admin&retryWrites=true&w=majority")
     collection2 = MongoClient(
-        "mongodb://Mirna:123@ac-pdcgmvi-shard-00-00.z9x8y2q.mongodb.net:27017,ac-pdcgmvi-shard-00-01.z9x8y2q.mongodb.net:27017,ac-pdcgmvi-shard-00-02.z9x8y2q.mongodb.net:27017/?ssl=true&replicaSet=atlas-83vr9r-shard-0&authSource=admin&retryWrites=true&w=majority",**connection_options)
+        "mongodb://Mirna:123@ac-pdcgmvi-shard-00-00.z9x8y2q.mongodb.net:27017,ac-pdcgmvi-shard-00-01.z9x8y2q.mongodb.net:27017,ac-pdcgmvi-shard-00-02.z9x8y2q.mongodb.net:27017/?ssl=true&replicaSet=atlas-83vr9r-shard-0&authSource=admin&retryWrites=true&w=majority")
 
     cluster = collection1
     db = cluster['Clients']
@@ -187,28 +179,19 @@ def DB(id, username, score, position, delFlag):
 
     if delFlag == 1:
 
-
-        delete_user(collection1, username,-1)
-        delete_user1(collection2, username,-1)
-
-    elif delFlag==0:
-        update_user(collection1, id, username, score, position)
-        update_user1(collection2, id, username, score, position)
-    if(len(quitted)!=0):
-        for i in range(len(quitted)):
-            delete_user(collection1,None ,quitted[i])
-            delete_user1(collection2,None ,quitted[i])
-
         try:
-            delete_user(collection1, username)
+            delete_user(collection1, username,-1)
         except:
             print("dbDelete0 failed")
         try:
-            delete_user1(collection2, username)
+            delete_user1(collection2, username,-1)
         except:
             print("dbDelete1 failed")
 
-    else:
+        # delete_user(collection1, username,-1)
+        # delete_user1(collection2, username,-1)
+
+    elif delFlag==0:
         try:
             update_user(collection1, id, username, score, position)
         except:
@@ -217,4 +200,35 @@ def DB(id, username, score, position, delFlag):
             update_user1(collection2, id, username, score, position)
         except:
             print("db update1 failed")
+        # update_user(collection1, id, username, score, position)
+        # update_user1(collection2, id, username, score, position)
+    if(quitted!=None and len(quitted)!=0):
+        for i in range(len(quitted)):
+            try:
+                delete_user(collection1,None ,quitted[i])
+            except:
+                print("delete quitted failed db0")
+            try:
+                delete_user1(collection2,None ,quitted[i])
+            except:
+                print("delete quitted failed db1")
+
+        # try:
+        #     delete_user(collection1, username)
+        # except:
+        #     print("dbDelete0 failed")
+        # try:
+        #     delete_user1(collection2, username)
+        # except:
+        #     print("dbDelete1 failed")
+
+    # else:
+    #     try:
+    #         update_user(collection1, id, username, score, position)
+    #     except:
+    #         print("db update0 failed")
+    #     try:
+    #         update_user1(collection2, id, username, score, position)
+    #     except:
+    #         print("db update1 failed")
 
