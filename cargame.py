@@ -90,6 +90,7 @@ class CarRacing:
 
 
     def initialize(self,x):
+        global olduser, oldscore
         # pygame.display.update()
         pos1 = [(1000*0.2,600*0.8),(1000*0.3,600*0.8),(1000*0.4,600*0.8),(1000*0.5,600*0.8)]
         self.crashed = False
@@ -108,14 +109,35 @@ class CarRacing:
 
             self.clock = pygame.time.Clock()
             self.get_user_name(self.clock, self.manager, self.SCREEN, self.WIDTH, self.HEIGHT)
-            p1 = n.getP()
+            p2 = n.getP()
+            print(p2)
+            n.send("(" + user + ")")
+            # p1=p2
+            olduser=0
+            if(p2!='0' and p2!='1' and p2!='2' and p2!='3'):
+                # p2= re.split(r'[(,)]', p2)
+                # print(p2[1])
+                # n.send(pos1[int(p1)])
+                print("bena3mel p2")
+                p1=p2[0]
+                oldscore=p2[2]
+                x1 = p2[1]
+                olduser=1
+
+            else:
+                p1=p2
+                # n.send("(" + user + ")")
+                n.send(pos1[int(p1)])
+                x = str(pos1[int(p1)])
+                s = re.split(r'[(,]', x)
+                x1 = float(s[1])
             v=[]
             print("p11111", p1)
-            n.send("(" + user + ")")
-            n.send(pos1[int(p1)])
-            x=str(pos1[int(p1)])
-            s = re.split(r'[(,]', x)
-            x1=float(s[1])
+            # n.send("(" + user + ")")
+            # n.send(pos1[int(p1)])
+            # x=str(pos1[int(p1)])
+            # s = re.split(r'[(,]', x)
+            # x1=float(s[1])
         self.carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
         self.carImg1 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car1.png')
         self.carImg2 = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car2.png')
@@ -173,7 +195,7 @@ class CarRacing:
         root.mainloop()
 
     def run_car(self):
-        global v,user,gui_thread
+        global v,user,gui_thread,olduser, oldscore
         # self.root.mainloop()
         # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
         while not self.crashed:
@@ -186,7 +208,7 @@ class CarRacing:
                 if event.type == pygame.QUIT:
                     # print("p1=",p1)
                     # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
-                    n.send(p1)
+                    n.send(str(p1))
                     n.send("quit")
                     self.crashed = True
                     # event_quit.set()
@@ -236,8 +258,15 @@ class CarRacing:
                     self.id=(v[a+1])
                     self.car(x1, self.car_y_coordinate,self.id,a)
 
-            self.highscore(self.count)
-            self.count += 1
+            if(olduser==1):
+                self.count=self.count+oldscore
+                # score=self.count+oldscore
+                self.highscore(self.count)
+                self.count += 1
+                olduser=0
+            else:
+                self.highscore(self.count)
+                self.count += 1
             if (self.count % 100 == 0):
                 n.send(self.count)
                 self.enemy_car_speed += 1

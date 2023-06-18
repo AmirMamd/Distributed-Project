@@ -10,7 +10,7 @@ class ChatClientGUI:
         self.root = root
         self.root.title("Chat Room")
         self.chat_room = "Chat Room"
-        self.server_address = "127.0.0.1"  # Change to the server's IP address
+        self.server_address = "18.119.138.60"  # Change to the server's IP address
 
         self.chat_box = scrolledtext.ScrolledText(self.root, state="disabled")
         self.chat_box.pack()
@@ -20,7 +20,7 @@ class ChatClientGUI:
         self.message_entry.bind("<Return>", self.send_message)
 
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect((self.server_address, 9999))
+        self.client_socket.connect((self.server_address, 5555))
         threading.Thread(target=self.receive_messages).start()
 
         self.root.protocol("WM_DELETE_WINDOW", self.handle_quit)

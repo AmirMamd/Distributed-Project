@@ -6,14 +6,14 @@ import pygame
 import re
 import concurrent.futures
 from pymongo import MongoClient
-from database_test import DB
+from database_test import *
 import threading
 LISTENER_LIMIT = 4
 active_clients = []  # List of all currently connected users
-HOST = "127.0.0.1"
+HOST = ""
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-PORT=5555
+PORT=3030
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -23,14 +23,16 @@ except socket.error as e:
 
 s.listen(LISTENER_LIMIT)
 print("Waiting for a connection, Server Started")
-
+pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 executor0 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
 executor1 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
 executor2 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
 executor3 = concurrent.futures.ThreadPoolExecutor(max_workers=100)
 executors=[executor0,executor1,executor2,executor3]
-ExFlag=False
+# LostConnectionUsers=[]
 users=[]
+ips=[]
+quitted=[]
 scores=[0,0,0,0]
 pos = [(1000*0.2,''),(1000*0.3,''),(1000*0.4,''),(1000*0.5,'')]
 carImg = pygame.image.load('.\\Car Racing Game using Pygame\\img\\car.png')
@@ -42,10 +44,11 @@ ids=[]
 indices=[]
 flagx=-1
 counter=0
+olduserflag=0
 
 
 def threaded_client(conn, player):
-    global currentPlayer,flagx,counter,pos
+    global currentPlayer,flagx,counter,pos ,user_id,user_name , user_position ,user_score,olduserflag
 
     print("id of current player =",player)  #player holds the id of the current player
     print("CurrentPlayer",currentPlayer)
@@ -95,7 +98,7 @@ def threaded_client(conn, player):
                 # print(ids[player], users[player], scores[player], pos[player][0], 0)
                 # dead=False
 
-                db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1,None))
+                db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1,None,0))
 
                 # db = threading.Thread(target=DB,args=(data,  pos[player][1], scores[player], pos[player][0],1))
 
@@ -120,7 +123,43 @@ def threaded_client(conn, player):
                     scores[player]=int(data)
                     print("scores=",scores)
                 if (len(s) == 3  and data!="update db"):
-                    # client_socket.send(s[1].encode())
+                    if(olduserflag==1):
+                        scores[user_id] = user_score
+                        pos[user_id]=(user_position,user_name)
+                        print("scores====", scores)
+                        print("ids====", ids)
+                        print("poss====", pos)
+                        olduserflag=0
+                    # if s[1] in LostConnectionUsers:
+                    # result = pool.submit(DB,ids[player], s[1], scores[player], pos[player][0], 2,None,1)
+                    # # LostConnectionUsers.pop(s[1])
+                    # # print("lost conn", LostConnectionUsers)
+                    # print("++++++++++++++++++++++++++++++++++++++++")
+                    # print("result =",result.result())
+                    # result1=result.result()
+                    # if(result1!=None):
+                    #     # user = {'_id': 0, 'name': 'j', 'position': 200.0, 'score': 2700}
+                    #     print("da5al")
+                    #     user_id = result1['_id']
+                    #     user_name = result1['name']
+                    #     user_position = result1['position']
+                    #     user_score = result1['score']
+                        # ids[quitted[0]] = quitted[0]
+                        # quitted.pop(0)
+                        # ids.pop(player)
+                    # currentPlayer-=1
+                    # scores[user_id]=user_score
+
+
+                    # pos[user_id]=(user_position,user_name)
+                    # print("aaa")
+                    # print("scores====",scores)
+                    # print("ids====", ids)
+                    # print("poss====", pos)
+                        # ids[player]=user_id
+                        #law el user kan mawgod update el pos bel score we position we kol 7aga haterga3 men el database
+                        # client_socket.send(s[1].encode())
+
                     users.append(s[1])
                     pos[player]=(pos[player][0],s[1])
                     print("users=", users)
@@ -143,6 +182,7 @@ def threaded_client(conn, player):
                             reply.append(pos[i]) #here reply holds the position of the cars that are in game excluding the current player
                             reply.append(i)
                             reply.append(scores[i])
+
                             print("replyyyy b flag 1", reply)
                     # if(data == "update db"):
                     #     print("ray7en ne update aho")
@@ -166,7 +206,7 @@ def threaded_client(conn, player):
                         # dead=False
                         # db = threading.Thread(target=DB, args=(ids[player],  pos[player][1], scores[player], pos[player][0],0)).start()
 
-                        executors[int(ids[player])].submit(DB,ids[player],  pos[player][1], scores[player], pos[player][0],0,indices)
+                        executors[int(ids[player])].submit(DB,ids[player],  pos[player][1], scores[player], pos[player][0],0,indices,0)
                         # print("player=", pos[player][1])
                         print("count threads", threading.active_count())
                         # if(threading.active_count()>150):
@@ -210,6 +250,12 @@ def threaded_client(conn, player):
 
         except:
             print("da5al fel except")
+            address = re.split(r'[(,)]', str(addr))
+            print("address", address[1])
+            quitted.append((address[1],player,pos[player][1]))
+            print("quitted=",quitted)
+            # LostConnectionUsers.append(pos[player][1])
+            currentPlayer-=1
             break
 
     if(data!="GameOver"):
@@ -219,11 +265,41 @@ def threaded_client(conn, player):
 
 currentPlayer=0
 while True:
-
+    flagg=0
+    global user_id,user_name , user_position ,user_score
     conn, addr = s.accept()
     print("Connected to:", addr)
+    address1 = re.split(r'[(,)]', str(addr))
+    if address1[1] not in ips:
+        ips.append(address1[1])
+    # print("address", address[2])
     if(currentPlayer < 4):
         print(" abl el if   indices[0]",indices,"ids",ids)
+        for item in quitted:
+            if item[0] in ips:
+                print("item0 and item 1",item[0],item[1],item[2])
+                # result = pool.submit(DB, int(ids[item[1]]), None,  None, None, 2, None, 1)
+                result = pool.submit(DB, None, item[2], None, None, 2, None, 1)
+
+                result1 = result.result()
+
+                print("resulttt=",result1)
+                ids[item[1]] = item[1]
+                if (result1 != None):
+                    # user = {'_id': 0, 'name': 'j', 'position': 200.0, 'score': 2700}
+                    print("da5 al")
+                    user_id =result1['_id']
+                    user_name = result1['name']
+                    user_position = result1['position']
+                    user_score = result1['score']
+                    olduserflag=1
+                    conn.send(pickle.dumps((item[1],user_position,user_score)))
+                print("afashna el 5arag")
+                flagg=1
+                start_new_thread(threaded_client, (conn, item[1]))
+                quitted.pop()
+                break
+
         if(len(indices)>0):
             print("indices[0]", indices[0], "indices=",indices)
             ids[indices[0]]=indices[0]
@@ -231,10 +307,11 @@ while True:
             start_new_thread(threaded_client, (conn, indices[0]))
             indices.pop(0)
             print("indices[0]", indices, "ids=", ids)
-        else:
+        elif(flagg==0):
             ids.append(currentPlayer)
             conn.send(pickle.dumps(str(currentPlayer)))
             start_new_thread(threaded_client, (conn, currentPlayer))
             print("ids be current player 3ady")
         conn.send(pickle.dumps(indices))
         currentPlayer+=1
+        flagg=0
