@@ -1,7 +1,5 @@
 from pymongo import MongoClient
 
-
-
 def delete_user(collection, username,id):
 
     if(id!=-1):
