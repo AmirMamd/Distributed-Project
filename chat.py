@@ -8,7 +8,11 @@ class ChatClientGUI:
         self.root = root
         self.root.title("Chat Room")
         self.chat_room = "Chat Room"
+
+        self.server_address = "18.119.138.60"  # Change to the server's IP address
+
         self.server_address = "3.133.154.143"  # Change to the server's IP address
+
 
         # Create a scrolled text widget to display the chat messages
         self.chat_box = scrolledtext.ScrolledText(self.root, state="disabled")
@@ -18,11 +22,16 @@ class ChatClientGUI:
         self.message_entry = Entry(self.root)
         self.message_entry.pack()
 
+
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.connect((self.server_address, 5555))
+        threading.Thread(target=self.receive_messages).start()
+
         # Create a button to send messages
         self.send_button = Button(self.root, text="Send", command=self.send_message)
         self.send_button.pack()
 
-        # Create a client socket and connect to the server
+      https://github.com/AmirMamd/Distributed-Project/pull/7/conflict?name=ChatServer.py&ancestor_oid=a2a6169de9ec9f07ac0c803f28e9561b9bd29d2d&base_oid=c2b7bd22bf24f9bd13f840b92aabd6da55c18a73&head_oid=83d8c93359dd83584066a9923461b4f3f9155328  # Create a client socket and connect to the server
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((self.server_address, 7777))
 

@@ -6,7 +6,26 @@ LISTENER_LIMIT = 4
 HOST = "0.0.0.0"
 chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+# PORT=8000
+# server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#
+# # Bind the server socket to a specific address and port
+# server_socket.bind((HOST, PORT))
+#
+#
+# # Listen for incoming connections
+# server_socket.listen(2)
+# server_socket.close()
+# chat_socket.connect((HOST, 8000))
+# # Send data to the target server
+# message = "Hello from Server 2!"
+# chat_socket.send(message.encode())
+# PORT = int(chat_socket.recv(4096).decode())
+PORT=6666
+
+
 PORT = 7777
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
