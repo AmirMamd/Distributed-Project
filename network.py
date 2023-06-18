@@ -6,8 +6,8 @@ class Network:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # self.server = "18.119.138.60"
         # self.port = 7777
-        self.server = "127.0.0.1"
-        self.port = 3030
+        self.server = "52.14.39.233"
+        self.port = 7777
         self.addr = (self.server, self.port)
         self.p = self.connect()
 

@@ -46,17 +46,10 @@ def update_user1(collection, id, username, score, position):
         {"$set": p1},
         upsert=True
     )
-    print(username, " User information updated from the database1.")
-# def DB(id, username, score, position, delFlag, quitted):
-#     connection_options = {
-#         'serverSelectionTimeoutMS': 600000,  # Timeout set to 60 seconds
-#         # Add other connection options if needed
-#     }
-#
-#     return True
+
+
 def DB(id, username, score, position, delFlag,quitted,LostConnection):
 
-    print("genaaa henaaaa")
     collection1 = MongoClient(
         "mongodb://amirrmamdouh:123@ac-l1zkv5z-shard-00-00.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-01.g8t8zzf.mongodb.net:27017,ac-l1zkv5z-shard-00-02.g8t8zzf.mongodb.net:27017/?ssl=true&replicaSet=atlas-xsrnrq-shard-0&authSource=admin&retryWrites=true&w=majority")
     collection2 = MongoClient(
@@ -81,11 +74,8 @@ def DB(id, username, score, position, delFlag,quitted,LostConnection):
         except:
             print("dbDelete1 failed")
 
-        # delete_user(collection1, username,-1)
-        # delete_user1(collection2, username,-1)
 
     elif delFlag==0:
-        print("genaaa henaaaaaaaaaa",id,username,score,position)
         try:
 
             update_user(collection1, id, username, score, position)
@@ -98,8 +88,6 @@ def DB(id, username, score, position, delFlag,quitted,LostConnection):
             print("db update1 successful")
         except:
             print("db update1 failed")
-        # update_user(collection1, id, username, score, position)
-        # update_user1(collection2, id, username, score, position)
     if(quitted!=None and len(quitted)!=0):
         for i in range(len(quitted)):
             try:
