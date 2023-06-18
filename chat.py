@@ -31,9 +31,9 @@ class ChatClientGUI:
         self.send_button = Button(self.root, text="Send", command=self.send_message)
         self.send_button.pack()
 
-      https://github.com/AmirMamd/Distributed-Project/pull/7/conflict?name=ChatServer.py&ancestor_oid=a2a6169de9ec9f07ac0c803f28e9561b9bd29d2d&base_oid=c2b7bd22bf24f9bd13f840b92aabd6da55c18a73&head_oid=83d8c93359dd83584066a9923461b4f3f9155328  # Create a client socket and connect to the server
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect((self.server_address, 7777))
+      # https://github.com/AmirMamd/Distributed-Project/pull/7/conflict?name=ChatServer.py&ancestor_oid=a2a6169de9ec9f07ac0c803f28e9561b9bd29d2d&base_oid=c2b7bd22bf24f9bd13f840b92aabd6da55c18a73&head_oid=83d8c93359dd83584066a9923461b4f3f9155328  # Create a client socket and connect to the server
+      #   self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      #   self.client_socket.connect((self.server_address, 7777))
 
         # Prompt the user to enter a username and send it to the server
         username = input("Enter your username: ")
