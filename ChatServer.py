@@ -21,7 +21,7 @@ chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # message = "Hello from Server 2!"
 # chat_socket.send(message.encode())
 # PORT = int(chat_socket.recv(4096).decode())
-PORT=6666
+# PORT=6666
 
 
 PORT = 7777
