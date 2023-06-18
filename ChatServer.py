@@ -3,9 +3,8 @@ import threading
 import pickle
 
 LISTENER_LIMIT = 4
-HOST = "0.0.0.0"
+HOST = "127.0.0.1"
 chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 # PORT=8000
 # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #
@@ -22,11 +21,8 @@ chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # chat_socket.send(message.encode())
 # PORT = int(chat_socket.recv(4096).decode())
 PORT=6666
-
-
-PORT = 7777
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 
 try:
     s.bind((HOST, PORT))
@@ -35,6 +31,24 @@ except socket.error as e:
 
 s.listen(LISTENER_LIMIT)
 
+
+# Connect to the target server
+
+
+# while True:
+    # Accept a client connection
+    # client_socket, addr = server_socket.accept()
+    # print("Accepted connection from", addr[0] + ":" + str(addr[1]))
+    #
+    # # Receive data from the client
+    # data = client_socket.recv(4096).decode()
+    # print("dataaaa", data)
+    # if data == "Hello from Server 1!":
+    #     print("[Received from Client Server]:", data)
+    #     client_socket.send("3000".encode())
+# chat_socket.close()
+
+
 print("Waiting for a connection, Server Started")
 
 server_socket = None
@@ -42,11 +56,13 @@ clients = []
 chat_room = "Chat Room"
 
 def threaded_client(conn, currentplayer):
-    # Add the client connection to the list of clients
     clients.append(conn)
-    username = conn.recv(1024).decode("utf-8")
+    username=conn.recv(1024).decode("utf-8")
 
-    # Send a welcome message to the client
+    # data = s.recv(4096).decode()
+    # if(data=="username"):
+    #     flag=1
+
     conn.sendall(username.encode())
 
     send_message(conn, f"Welcome to the {chat_room}, {username}!")
@@ -56,18 +72,17 @@ def threaded_client(conn, currentplayer):
             message = conn.recv(1024).decode("utf-8")
             if message:
                 print(f"Received message from {username}: {message}")
-                # Broadcast the message to all clients except the sender
                 broadcast_message(f"{username}: {message}", sender_socket=conn)
             else:
                 clients.remove(conn)
                 conn.close()
-                # Notify other clients that the user has left
+                # currentplayer-=1
                 broadcast_message(f"{username} has left the {chat_room}")
                 break
         except ConnectionResetError:
             clients.remove(conn)
             conn.close()
-            # Notify other clients that the user has left
+            # currentplayer-=1
             broadcast_message(f"{username} has left the {chat_room}")
             break
 
@@ -80,9 +95,21 @@ def send_message(client_socket, message):
 
 currentPlayer = 0
 while True:
+
     conn, addr = s.accept()
     print("Connected to:", addr)
+    # client_socket, addr = server_socket.accept()
     print("Accepted connection from", addr[0] + ":" + str(addr[1]))
-
-    # Start a new thread to handle the client
+    # Receive data from the client
+    # data = client_socket.recv(4096).decode()
+    # print("dataaaa", data)
+    # if currentPlayer < 4:
     threading.Thread(target=threaded_client, args=(conn, currentPlayer)).start()
+        # currentPlayer += 1
+    # client_socket.send("3000".encode())
+    # if data == "Hello from Server 1!":
+    #     print("[Received from Client Server]:", data)
+
+    # if currentPlayer < 4:
+    #     threading.Thread(target=threaded_client, args=(conn, currentPlayer)).start()
+    #     currentPlayer += 1

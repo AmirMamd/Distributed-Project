@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 
+
+
 def delete_user(collection, username,id):
 
     if(id!=-1):
@@ -44,7 +46,6 @@ def update_user1(collection, id, username, score, position):
         {"$set": p1},
         upsert=True
     )
-
     print(username, " User information updated from the database1.")
 # def DB(id, username, score, position, delFlag, quitted):
 #     connection_options = {
@@ -119,5 +120,4 @@ def DB(id, username, score, position, delFlag,quitted,LostConnection):
             return get_user1(collection2,str(username))
         except:
             print("except of getting user")
-
 
