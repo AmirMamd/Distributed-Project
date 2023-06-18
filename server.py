@@ -171,6 +171,7 @@ def threaded_client(conn, player):
                             break
 
                     if(flag==0 and i!=int(player)):
+
                         print("i=",i,"ids=",ids, "int player",int(player))
                         for k in range(len(reply)):
                             if(k%3==1 and i==reply[k]):

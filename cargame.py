@@ -14,7 +14,7 @@ import tkinter as tk
 class CarRacing:
     def __init__(self):
         pygame.init()
-        self.display_width = 800
+        self.display_width = 1000
         self.display_height = 600
         self.black = (0, 0, 0)
         # Create an instance of ChatClientGUI
@@ -151,7 +151,7 @@ class CarRacing:
 
         # enemy_car
         self.enemy_car = pygame.image.load('.\\Car Racing Game using Pygame\\img\\enemy_car_1.png')
-        self.enemy_car_startx = random.randrange(110, 650)
+        self.enemy_car_startx = random.randrange(310, 450)
         self.enemy_car_starty = -600
         self.enemy_car_speed = 5
         self.enemy_car_width = 49
@@ -159,8 +159,8 @@ class CarRacing:
 
         # Background
         self.bgImg = pygame.image.load(".\\Car Racing Game using Pygame\\img\\back_ground.jpg")
-        self.bg_x1 = (self.display_width /3) - (360/2)
-        self.bg_x2 = (self.display_width / 3) - (360/2)
+        self.bg_x1 = (self.display_width /3) - (360/1.5)
+        self.bg_x2 = (self.display_width / 3) - (360/1.5)
         self.bg_y1 = 0
         self.bg_y2 = -600
         self.bg_speed = 3
@@ -195,6 +195,7 @@ class CarRacing:
         root.mainloop()
 
     def run_car(self):
+
         global v,user,gui_thread,olduser, oldscore
         # self.root.mainloop()
         # v = n.send((self.car_x_coordinate, self.car_y_coordinate))
@@ -239,7 +240,7 @@ class CarRacing:
 
             if self.enemy_car_starty > self.display_height:
                 self.enemy_car_starty = 0 - self.enemy_car_height
-                self.enemy_car_startx = random.randrange(110, 650)
+                self.enemy_car_startx = random.randrange(310, 450)
             print("v fo2 5ales=", v)
 
             self.id = p1
