@@ -14,7 +14,7 @@ import tkinter as tk
 class CarRacing:
     def __init__(self):
         pygame.init()
-        self.display_width = 800
+        self.display_width = 1000
         self.display_height = 600
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
@@ -126,7 +126,6 @@ class CarRacing:
         self.car_y_coordinate = (self.display_height * 0.8)
         self.id=0
         self.car_width = 49
-
         # enemy_car
         self.enemy_car = pygame.image.load('.\\Car Racing Game using Pygame\\img\\enemy_car_1.png')
         self.enemy_car_startx = random.randrange(310, 450)

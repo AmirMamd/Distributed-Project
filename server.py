@@ -8,7 +8,7 @@ from database_test import *
 import threading
 LISTENER_LIMIT = 4
 active_clients = []  # List of all currently connected users
-HOST = ""
+HOST = "127.0.0.1"
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 PORT=7777
@@ -133,6 +133,8 @@ def threaded_client(conn, player):
             address = re.split(r'[(,)]', str(addr))
             quitted.append((address[1],player,pos[player][1]))
             currentPlayer-=1
+            if address[1] not in ips:
+                ips.append(address[1])
             break
 
     if(data!="GameOver"):
@@ -144,9 +146,9 @@ while True:
     global user_id,user_name , user_position ,user_score
     conn, addr = s.accept()
     print("Connected to:", addr)
-    address1 = re.split(r'[(,)]', str(addr))
-    if address1[1] not in ips:
-        ips.append(address1[1])
+    # address1 = re.split(r'[(,)]', str(addr))
+    # if address1[1] not in ips:
+    #     ips.append(address1[1])
     if(currentPlayer < 4):
         for item in quitted:
             if item[0] in ips:

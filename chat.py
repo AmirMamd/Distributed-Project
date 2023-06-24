@@ -10,7 +10,7 @@ class ChatClientGUI:
         self.root = root
         self.root.title("Chat Room")
         self.chat_room = "Chat Room"
-        self.server_address = "52.14.39.233"  # Change to the server's IP address
+        self.server_address = "127.0.0.1"  # Change to the server's IP address
 
 
         self.chat_box = scrolledtext.ScrolledText(self.root, state="disabled")

@@ -9,7 +9,7 @@ chat_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # PORT=6666
 
-PORT = 7777
+PORT = 5555
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
